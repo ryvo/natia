@@ -1,6 +1,9 @@
 package cz.ryvo.natia.service.impl;
 
 import cz.ryvo.natia.domain.CatalogueVO;
+import cz.ryvo.natia.error.Errors;
+import cz.ryvo.natia.error.Errors.RESOURCE_NOT_FOUND;
+import cz.ryvo.natia.exception.NotFoundException;
 import cz.ryvo.natia.repository.CatalogueRepository;
 import cz.ryvo.natia.service.CatalogueService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,5 +23,13 @@ public class CatalogueServiceImpl implements CatalogueService {
     @Override
     public List<CatalogueVO> listCatalogues() {
         return catalogueRepository.findAll(new Sort(DESC, "creationTime"));
+    }
+
+    public CatalogueVO getCatalogue(Long id) {
+        CatalogueVO catalogue = catalogueRepository.findOne(id);
+        if (catalogue == null) {
+            throw new NotFoundException(RESOURCE_NOT_FOUND.class);
+        }
+        return catalogue;
     }
 }

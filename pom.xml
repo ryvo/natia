@@ -24,6 +24,10 @@
 		<jsr305.version>3.0.1</jsr305.version>
 		<flyway.version>4.0</flyway.version>
         <springfox.version>2.4.0</springfox.version>
+        <commons-lang3.version>3.4</commons-lang3.version>
+        <commons-io.version>2.5</commons-io.version>
+        <lombok.version>1.16.6</lombok.version>
+        <jackson.version>2.7.4</jackson.version>
 	</properties>
 
 	<dependencies>
@@ -44,10 +48,26 @@
 			<artifactId>spring-boot-starter-tomcat</artifactId>
 		</dependency>
 
-		<dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
+        </dependency>
+
+        <dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.16.6</version>
+			<version>${lombok.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.findbugs</groupId>
@@ -69,11 +89,6 @@
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
-            <version>${springfox.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
             <version>${springfox.version}</version>
         </dependency>
 

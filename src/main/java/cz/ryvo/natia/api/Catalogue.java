@@ -1,8 +1,6 @@
 package cz.ryvo.natia.api;
 
-import cz.ryvo.natia.domain.ArticleVO;
 import cz.ryvo.natia.validation.constraint.OutputOnly;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -25,5 +23,5 @@ public class Catalogue {
     private LocalDate validTo;
 
     @OutputOnly
-    private List<ArticleVO> articleVOs;
+    private List<Article> articles;
 }
