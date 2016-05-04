@@ -12,4 +12,7 @@ public final class Errors {
     @ErrorDescription(value = "2000", message = "Invalid file")
     public static final class INVALID_FILE implements ErrorCode {}
 
+    // OPERATION
+    @ErrorDescription(value = "4000", message = "Search parameters are inaccurate and would provide too many results")
+    public static final class SEARCH_PARAMS_TOO_INACCURATE implements ErrorCode {}
 }

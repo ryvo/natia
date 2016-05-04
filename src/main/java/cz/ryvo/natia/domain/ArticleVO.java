@@ -6,31 +6,26 @@ import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
+
+import static javax.persistence.GenerationType.IDENTITY;
 
 @Data
 @NoArgsConstructor
 @Entity
 @Table(name = "article")
-@IdClass(ArticlePK.class)
-@ToString(exclude = "catalogue")
 public class ArticleVO implements Serializable {
 
     public static final Long serialVersionUID = 1L;
 
     @Id
-    private CatalogueVO catalogue;
-
-    @Id
+    @Column(name = "code", length = 50, nullable = false)
     private String code;
 
-    @Column(name = "name", length = 128, nullable = false)
-    private String name;
+    @Column(name = "description", length = 128, nullable = false)
+    private String description;
 }

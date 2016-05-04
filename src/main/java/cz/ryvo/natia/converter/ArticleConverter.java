@@ -18,7 +18,7 @@ public class ArticleConverter implements ApiConverter<Article, ArticleVO> {
         }
         Article article = new Article();
         article.setCode(domain.getCode());
-        article.setName(domain.getName());
+        article.setName(domain.getDescription());
         return article;
     }
 
