@@ -5,6 +5,7 @@ import cz.ryvo.natia.validation.validator.OutputOnlyMapValidator;
 import cz.ryvo.natia.validation.validator.OutputOnlyObjectValidator;
 
 import javax.validation.Constraint;
+import javax.validation.Payload;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -22,4 +23,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 })
 @Documented
 public @interface OutputOnly {
+
+    String message() default "{cz.ryvo.natia.validation.constraint.OutputOnly.message}";
+
+    Class<?>[] groups() default {};
+
+    Class<? extends Payload>[] payload() default {};
 }

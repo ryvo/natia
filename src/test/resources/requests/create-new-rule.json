@@ -1,0 +1,27 @@
+{
+  "name": "{ruleName}",
+  "inputArticles": [
+    {
+      "code": "00001/01",
+      "description": "Input article 1",
+      "amount": 11
+    },
+    {
+      "code": "00001/02",
+      "description": "Input article 2",
+      "amount": 12
+    }
+  ],
+  "outputArticles": [
+    {
+      "code": "00002/01",
+      "description": "Output article 1",
+      "amount": 21
+    },
+    {
+      "code": "00002/02",
+      "description": "Output article 2",
+      "amount": 22
+    }
+  ]
+}

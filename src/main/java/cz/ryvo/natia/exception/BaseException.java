@@ -24,6 +24,11 @@ public class BaseException extends RuntimeException {
         this.params = params;
     }
 
+    public BaseException(Class<? extends ErrorCode> errorCodeClass, Object... params) {
+        this.errorCodeClass = errorCodeClass;
+        this.params = ErrorContextHolder.createParamsMap(ErrorContextHolder.getRawMessage(errorCodeClass), params);
+    }
+
     public String getErrorCode() {
         return ErrorContextHolder.getCode(errorCodeClass);
     }
