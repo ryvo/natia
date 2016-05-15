@@ -18,5 +18,5 @@ public interface RuleService {
 
     void deleteRule(@Nonnull Long id);
 
-    void setRuleIndex(@NonNull Long id, @NonNull Integer newOrder);
+    void setRuleRank(@NonNull Long id, @NonNull Integer newOrder);
 }

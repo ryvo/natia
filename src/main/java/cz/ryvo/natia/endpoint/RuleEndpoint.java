@@ -62,8 +62,8 @@ public class RuleEndpoint {
         ruleService.deleteRule(ruleId);
     }
 
-    @RequestMapping(path = "/{ruleId}/order/{order}", method = PUT)
-    public void setRuleOrder(@PathVariable("ruleId") Long ruleId, @PathVariable("order") Integer order) {
-        ruleService.setRuleIndex(ruleId, order);
+    @RequestMapping(path = "/{ruleId}/rank/{rank}", method = PUT)
+    public void setRuleRank(@PathVariable("ruleId") Long ruleId, @PathVariable("rank") Integer rank) {
+        ruleService.setRuleRank(ruleId, rank);
     }
 }

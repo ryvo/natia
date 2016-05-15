@@ -81,10 +81,10 @@ public class RuleServiceImpl implements RuleService {
     }
 
     @Override
-    public void setRuleIndex(@NonNull Long id, @NonNull Integer newIndex) {
-        Integer lastIndex = ruleRepository.getLastIndex();
-        if (newIndex < 0 || newIndex > lastIndex + 1) {
-            throw new BadRequestException(INVALID_ITEM_RANK.class, ImmutableMap.of("rank", newIndex, "resource", "rule"));
+    public void setRuleRank(@NonNull Long id, @NonNull Integer newRank) {
+        Integer lastRank = ruleRepository.getLastIndex();
+        if (newRank < 0 || newRank > lastRank + 1) {
+            throw new BadRequestException(INVALID_ITEM_RANK.class, ImmutableMap.of("rank", newRank, "resource", "rule"));
         }
 
         RuleVO persistedRule = ruleRepository.findOne(id);
@@ -92,12 +92,12 @@ public class RuleServiceImpl implements RuleService {
             throw new NotFoundException("rule", id);
         }
 
-        if (persistedRule.getRank().equals(newIndex)) {
+        if (persistedRule.getRank().equals(newRank)) {
             return; // No action needed
         }
 
-        rerankRules(persistedRule.getRank(), newIndex);
-        persistedRule.setRank(newIndex);
+        rerankRules(persistedRule.getRank(), newRank);
+        persistedRule.setRank(newRank);
     }
 
     private void rerankRules(@NonNull Integer oldIndex, @NonNull Integer newIndex) {
