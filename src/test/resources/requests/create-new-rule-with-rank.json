@@ -1,5 +1,6 @@
 {
   "name": "${ruleName}",
+  "rank": "${rank}",
   "inputArticles": [
     {
       "code": "00001/01",

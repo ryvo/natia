@@ -1,10 +1,12 @@
 package cz.ryvo.natia.domain;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -16,6 +18,7 @@ import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.InheritanceType.SINGLE_TABLE;
 
 @Data
+@IdClass(RuleArticlePK.class)
 @MappedSuperclass
 public abstract class RuleArticleVO implements Serializable {
 
@@ -27,7 +30,6 @@ public abstract class RuleArticleVO implements Serializable {
     private RuleVO rule;
 
     @Id
-    @Column(name = "code", length = 50, nullable = false)
     private String code;
 
     @Column(name = "description", length = 128, nullable = false)

@@ -6,7 +6,8 @@ CREATE TABLE article (
 
 CREATE TABLE rule (
   id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(128) NOT NULL
+  name VARCHAR(128) NOT NULL,
+  rank INT NOT NULL
 );
 
 CREATE TABLE rule_input_article (
@@ -14,7 +15,9 @@ CREATE TABLE rule_input_article (
   code VARCHAR(50) NOT NULL,
   description VARCHAR(128) NOT NULL,
   amount INT NOT NULL,
+  rank INT NOT NULL,
   PRIMARY KEY (rule_id, code),
+  UNIQUE (rule_id, rank),
   FOREIGN KEY (rule_id) REFERENCES rule (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -23,6 +26,8 @@ CREATE TABLE rule_output_article (
   code VARCHAR(50) NOT NULL,
   description VARCHAR(128) NOT NULL,
   amount INT NOT NULL,
+  rank INT NOT NULL,
   PRIMARY KEY (rule_id, code),
+  UNIQUE (rule_id, rank),
   FOREIGN KEY (rule_id) REFERENCES rule (id) ON DELETE CASCADE ON UPDATE CASCADE
 );

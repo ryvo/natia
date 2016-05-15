@@ -1,9 +1,19 @@
-INSERT INTO rule (id, name) VALUES (1, 'Rule 1');
+SET REFERENTIAL_INTEGRITY FALSE;
 
-INSERT INTO rule_input_article (rule_id, code, description, amount) VALUES
-  (1, '00001', 'Input article 1', 5),
-  (1, '00002', 'Input article 2', 5);
+TRUNCATE TABLE rule;
+TRUNCATE TABLE rule_input_article;
+TRUNCATE TABLE rule_output_article;
 
-INSERT INTO rule_output_article (rule_id, code, description, amount) VALUES
-  (1, '00001', 'Output article 1', 1),
-  (1, '00002', 'Output article 2', 1);
+SET REFERENTIAL_INTEGRITY TRUE;
+
+
+
+INSERT INTO rule (id, name, rank) VALUES (1, 'Default rule', 0);
+
+INSERT INTO rule_input_article (rule_id, code, description, amount, rank) VALUES
+  (1, '00001', 'Default input article 1', 5, 0),
+  (1, '00002', 'Default input article 2', 5, 1);
+
+INSERT INTO rule_output_article (rule_id, code, description, amount, rank) VALUES
+  (1, '00001', 'Default output article 1', 1, 0),
+  (1, '00002', 'Default output article 2', 1, 1);

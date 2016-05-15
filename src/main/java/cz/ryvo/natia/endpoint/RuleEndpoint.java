@@ -52,7 +52,7 @@ public class RuleEndpoint {
     }
 
     @RequestMapping(path = "/{ruleId}", method = PUT)
-    public void updateRule(Long id, Rule rule) {
+    public void updateRule(@PathVariable("ruleId") Long id, @RequestBody @Valid Rule rule) {
         RuleVO ruleVO = ruleConverter.toDomain(rule);
         ruleService.updateRule(id, ruleConverter.toDomain(rule));
     }
@@ -60,5 +60,10 @@ public class RuleEndpoint {
     @RequestMapping(path = "/{ruleId}", method = DELETE)
     public void deleteRule(@PathVariable("ruleId") Long ruleId) {
         ruleService.deleteRule(ruleId);
+    }
+
+    @RequestMapping(path = "/{ruleId}/order/{order}", method = PUT)
+    public void setRuleOrder(@PathVariable("ruleId") Long ruleId, @PathVariable("order") Integer order) {
+        ruleService.setRuleIndex(ruleId, order);
     }
 }

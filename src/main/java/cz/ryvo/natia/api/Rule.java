@@ -20,6 +20,8 @@ public class Rule {
     @Length(min = 1, max = 128)
     private String name;
 
+    private Integer rank;
+
     @Valid
     private List<RuleArticle> outputArticles;
 

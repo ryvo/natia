@@ -17,4 +17,6 @@ public interface RuleService {
     void updateRule(@Nonnull Long id, @Nonnull RuleVO rule);
 
     void deleteRule(@Nonnull Long id);
+
+    void setRuleIndex(@NonNull Long id, @NonNull Integer newOrder);
 }

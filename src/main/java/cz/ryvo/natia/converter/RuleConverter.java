@@ -4,9 +4,7 @@ import cz.ryvo.natia.api.Rule;
 import cz.ryvo.natia.domain.RuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -25,12 +23,13 @@ public class RuleConverter implements BiConverter<Rule, RuleVO> {
             return null;
         }
 
-        Rule rule = new Rule();
-        rule.setId(domain.getId());
-        rule.setName(domain.getName());
-        rule.setInputArticles(ruleInputArticleConverter.toApi(domain.getInputArticles()));
-        rule.setOutputArticles(ruleOutputArticleConverter.toApi(domain.getOutputArticles()));
-        return rule;
+        Rule api = new Rule();
+        api.setId(domain.getId());
+        api.setName(domain.getName());
+        api.setRank(domain.getRank());
+        api.setInputArticles(ruleInputArticleConverter.toApi(domain.getInputArticles()));
+        api.setOutputArticles(ruleOutputArticleConverter.toApi(domain.getOutputArticles()));
+        return api;
     }
 
     public RuleVO toDomain(Rule api) {
@@ -38,12 +37,13 @@ public class RuleConverter implements BiConverter<Rule, RuleVO> {
             return null;
         }
 
-        RuleVO rule = new RuleVO();
-        rule.setId(api.getId());
-        rule.setName(api.getName());
-        rule.setInputArticles(ruleInputArticleConverter.toDomain(api.getInputArticles(), rule));
-        rule.setOutputArticles(ruleOutputArticleConverter.toDomain(api.getOutputArticles(), rule));
-        return rule;
+        RuleVO domain = new RuleVO();
+        domain.setId(api.getId());
+        domain.setName(api.getName());
+        domain.setRank(api.getRank());
+        domain.setInputArticles(ruleInputArticleConverter.toDomain(api.getInputArticles(), domain));
+        domain.setOutputArticles(ruleOutputArticleConverter.toDomain(api.getOutputArticles(), domain));
+        return domain;
     }
 
     public List<Rule> toApi(List<RuleVO> domains) {

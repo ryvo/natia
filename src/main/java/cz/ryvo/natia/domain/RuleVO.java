@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import java.util.List;
 
@@ -27,9 +28,20 @@ public class RuleVO {
     @Column(name = "name", length = 128, nullable = false, unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "rule", cascade = ALL, orphanRemoval = true)
-    private List<RuleOutputArticleVO> outputArticles;
+    @Column(name = "rank", nullable = false)
+    private Integer rank;
 
     @OneToMany(mappedBy = "rule", cascade = ALL, orphanRemoval = true)
+    @OrderColumn(name = "rank")
     private List<RuleInputArticleVO> inputArticles;
+
+    @OneToMany(mappedBy = "rule", cascade = ALL, orphanRemoval = true)
+    @OrderColumn(name = "rank")
+    private List<RuleOutputArticleVO> outputArticles;
+
+    public RuleVO(Long id, String name, Integer rank) {
+        this.id = id;
+        this.name = name;
+        this.rank = rank;
+    }
 }

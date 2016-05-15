@@ -33,11 +33,6 @@ public class NatiaApplication extends SpringBootServletInitializer {
 		return application.sources(NatiaApplication.class);
 	}
 
-    @Override
-    public void onStartup(ServletContext servletContext) throws ServletException {
-        super.onStartup(servletContext);
-    }
-
     private static void startH2Server() {
         try {
             Server h2Server = Server.createTcpServer().start();
