@@ -2,6 +2,7 @@ package cz.ryvo.natia.service.impl;
 
 import com.google.common.collect.ImmutableMap;
 import cz.ryvo.natia.domain.RuleVO;
+import cz.ryvo.natia.error.Errors;
 import cz.ryvo.natia.error.Errors.INVALID_ITEM_RANK;
 import cz.ryvo.natia.exception.BadRequestException;
 import cz.ryvo.natia.exception.NotFoundException;
@@ -13,6 +14,9 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+
+import static java.util.Collections.singletonMap;
+import static java.util.Objects.requireNonNull;
 
 @Service
 @Transactional
@@ -37,6 +41,10 @@ public class RuleServiceImpl implements RuleService {
 
     @Override
     public Long createRule(@NonNull RuleVO rule) {
+        requireNonNull(rule.getName(), "Rule name must not be null");
+
+        checkDuplicateRuleName(rule.getName());
+
         Integer lastIndex = ruleRepository.getLastIndex();
         if (rule.getRank() == null) {
             rule.setRank(lastIndex == null ? 0 : ++lastIndex);
@@ -105,6 +113,12 @@ public class RuleServiceImpl implements RuleService {
             ruleRepository.moveRuleIndexDown(oldIndex, newIndex);
         } else if (newIndex > oldIndex) {
             ruleRepository.moveRuleIndexUp(oldIndex, newIndex);
+        }
+    }
+
+    private void checkDuplicateRuleName(String name) {
+        if (ruleRepository.findOneByName(name) != null) {
+            throw new BadRequestException(Errors.DUPLICATE_RULE_NAME.class, singletonMap("name", name));
         }
     }
 }

@@ -25,4 +25,6 @@ public interface RuleRepository extends JpaRepository<RuleVO, Long> {
     @Modifying
     @Query("UPDATE RuleVO SET rank = rank - 1 WHERE rank > :oldRank AND rank <= :newRank")
     void moveRuleIndexUp(@Param("oldRank") Integer oldRank, @Param("newRank") Integer newRank);
+
+    RuleVO findOneByName(String name);
 }

@@ -19,14 +19,24 @@ public class BaseException extends RuntimeException {
         this.errorCodeClass = errorCodeClass;
     }
 
-    public BaseException(Class<? extends ErrorCode> errorCodeClass, Map<String, Object> params) {
-        this.errorCodeClass = errorCodeClass;
-        this.params = params;
-    }
-
     public BaseException(Class<? extends ErrorCode> errorCodeClass, Object... params) {
         this.errorCodeClass = errorCodeClass;
         this.params = ErrorContextHolder.createParamsMap(ErrorContextHolder.getRawMessage(errorCodeClass), params);
+    }
+
+    public BaseException(Class<? extends ErrorCode> errorCodeClass, Map<String, Object> params) {
+        this(errorCodeClass, ErrorContextHolder.getMessage(errorCodeClass, params), null);
+        this.params = params;
+    }
+
+    public BaseException(Class<? extends ErrorCode> errorCodeClass, Map<String, Object> params, Throwable cause) {
+        this(errorCodeClass, ErrorContextHolder.getMessage(errorCodeClass, params), cause);
+        this.params = params;
+    }
+
+    public BaseException(Class<? extends ErrorCode> errorCodeClass, String message, Throwable cause) {
+        super(message, cause);
+        this.errorCodeClass = errorCodeClass;
     }
 
     public String getErrorCode() {

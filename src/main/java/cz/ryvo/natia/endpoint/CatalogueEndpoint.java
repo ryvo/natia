@@ -1,6 +1,7 @@
 package cz.ryvo.natia.endpoint;
 
 import cz.ryvo.natia.api.Article;
+import cz.ryvo.natia.api.CatalogueImportResult;
 import cz.ryvo.natia.converter.ArticleConverter;
 import cz.ryvo.natia.service.CatalogueService;
 import io.swagger.annotations.ApiOperation;
@@ -29,8 +30,8 @@ public class CatalogueEndpoint {
 
     @RequestMapping(method = POST, consumes = MULTIPART_FORM_DATA_VALUE)
     @ApiOperation(value = "Create catalogue by uploading a file", consumes = MULTIPART_FORM_DATA_VALUE)
-    public void importCatalogue(MultipartFile file) {
-        catalogueService.importCatalogue(file);
+    public CatalogueImportResult importCatalogue(MultipartFile file) {
+        return new CatalogueImportResult(catalogueService.importCatalogue(file));
     }
 
     @RequestMapping(path = "/articles/search", method = POST)

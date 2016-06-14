@@ -2,6 +2,7 @@ package cz.ryvo.natia.service.impl;
 
 import cz.ryvo.natia.domain.ArticleVO;
 import cz.ryvo.natia.error.Errors;
+import cz.ryvo.natia.error.Errors.INVALID_FILE;
 import cz.ryvo.natia.error.Errors.SEARCH_PARAMS_TOO_INACCURATE;
 import cz.ryvo.natia.excel.CatalogueReader;
 import cz.ryvo.natia.exception.BadRequestException;
@@ -29,7 +30,7 @@ public class CatalogueServiceImpl implements CatalogueService {
 
     @Override
     @Transactional
-    public void importCatalogue(@NonNull MultipartFile file) {
+    public int importCatalogue(@NonNull MultipartFile file) {
         List<ArticleVO> articles;
         try {
             articles = catalogueReader.readCatalogue(file.getInputStream());
@@ -37,10 +38,11 @@ public class CatalogueServiceImpl implements CatalogueService {
                 throw new Exception("Empty catalogue, no articles found. Cancelling operation.");
             }
         } catch (Exception e) {
-            throw new BadRequestException(Errors.INVALID_FILE.class);
+            throw new BadRequestException(INVALID_FILE.class);
         }
 
         articles.forEach(articleRepository::save);
+        return articles.size();
     }
 
     @Override

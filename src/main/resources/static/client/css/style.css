@@ -1,0 +1,53 @@
+@charset "UTF-8";
+/*
+ * jQuery File Upload Plugin CSS Example 8.8.2
+ * https://github.com/blueimp/jQuery-File-Upload
+ *
+ * Copyright 2013, Sebastian Tschan
+ * https://blueimp.net
+ *
+ * Licensed under the MIT license:
+ * http://www.opensource.org/licenses/MIT
+ */
+
+body {
+  padding-top: 60px;
+}
+
+
+/*
+ * The list of rules
+ */
+#rule-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 300px;
+}
+
+#rule-list li {
+  margin: 0.5em 0;
+  /*padding: 1em;*/
+  line-height: 2em;
+  padding-left: 42px;
+  font-size: 1.2em;
+  /*height: 1.5em;*/
+  border: 1px solid gray;
+  /*background: white;*/
+  position: relative;
+  list-style: none;
+}
+
+li .handle {
+  /*background: #f8f8f8;*/
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  padding: 8px;
+}
+
+.ui-selecting { background: #eee; }
+.ui-selecting .handle { background: #ddd; }
+.ui-selected { background: #def; }
+.ui-selected .handle { background: #cde; }

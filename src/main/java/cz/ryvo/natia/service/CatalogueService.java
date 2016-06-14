@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface CatalogueService {
 
-    void importCatalogue(MultipartFile file);
+    int importCatalogue(MultipartFile file);
 
     List<ArticleVO> searchArticles(@NonNull String pattern);
 }

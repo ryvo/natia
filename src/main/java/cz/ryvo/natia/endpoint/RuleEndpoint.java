@@ -5,6 +5,7 @@ import cz.ryvo.natia.api.Rule;
 import cz.ryvo.natia.converter.RuleConverter;
 import cz.ryvo.natia.domain.RuleVO;
 import cz.ryvo.natia.service.RuleService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,8 +22,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
-@RestController
+@RestController("v1RuleEndpoint")
 @RequestMapping(path = RuleEndpoint.ENDPOINT_URL_PATH)
+@Api(value = "v1.rule-endpoint")
 public class RuleEndpoint {
 
     public final static String ENDPOINT_URL_PATH = "/api/v1/rules";
