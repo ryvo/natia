@@ -1,53 +1,71 @@
 @charset "UTF-8";
-/*
- * jQuery File Upload Plugin CSS Example 8.8.2
- * https://github.com/blueimp/jQuery-File-Upload
- *
- * Copyright 2013, Sebastian Tschan
- * https://blueimp.net
- *
- * Licensed under the MIT license:
- * http://www.opensource.org/licenses/MIT
- */
 
 body {
-  padding-top: 60px;
+  padding-top: 20px;
 }
 
-
-/*
- * The list of rules
- */
-#rule-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  width: 300px;
+.vertical-space {
+  margin-top: 24px;
+  margin-bottom: 24px;
 }
 
-#rule-list li {
-  margin: 0.5em 0;
-  /*padding: 1em;*/
-  line-height: 2em;
+ul#rule-list > li {
   padding-left: 42px;
-  font-size: 1.2em;
-  /*height: 1.5em;*/
-  border: 1px solid gray;
-  /*background: white;*/
-  position: relative;
-  list-style: none;
 }
 
-li .handle {
-  /*background: #f8f8f8;*/
+ul#rule-list > li .handle {
+  background: ghostwhite;
   position: absolute;
   left: 0;
   top: 0;
   bottom: 0;
-  padding: 8px;
+  padding: 14px 8px;
 }
 
-.ui-selecting { background: #eee; }
-.ui-selecting .handle { background: #ddd; }
-.ui-selected { background: #def; }
-.ui-selected .handle { background: #cde; }
+ul#rule-list > li:first-of-type .handle {
+  border-top-left-radius: 3px;
+}
+
+ul#rule-list > li:last-of-type .handle {
+  border-bottom-left-radius: 3px;
+}
+
+ul#rule-list > li .remove-button {
+  float:right;
+}
+/*li .rename-button {*/
+/*background: #6fa5d2;*/
+/*position: absolute;*/
+/*right: 35px;*/
+/*top: 0;*/
+/*bottom: 0;*/
+/*padding: 8px;*/
+/*}*/
+
+/*ul#rule-list > li .remove-button {*/
+/*/!*background: lightcoral;*!/*/
+/*position: absolute;*/
+/*float:right;*/
+/*right: 0;*/
+/*top: 0;*/
+/*bottom: 0;*/
+/*padding: 8px;*/
+/*}*/
+
+/*ul#rule-list > li:first-of-type .remove-button {*/
+/*border-radius: 0 3px 0 0;*/
+/*}*/
+
+/*ul#rule-list > li:last-of-type .remove-button {*/
+/*border-radius: 0 0 3px 0;*/
+/*}*/
+
+/*ul#rule-list > li:not(:first-of-type) .remove-button,*/
+/*ul#rule-list > li:not(:last-of-type) .remove-button {*/
+/*border-radius: 0 3px 0 0;*/
+/*}*/
+
+ul#rule-list .ui-selecting { background: #eee; }
+ul#rule-list .ui-selecting .handle { background: #ddd; }
+ul#rule-list .ui-selected { background: #def; }
+ul#rule-list .ui-selected .handle { background: #cde; }

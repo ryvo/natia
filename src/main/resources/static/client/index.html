@@ -9,85 +9,108 @@
     <!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
     <link rel="stylesheet" href="css/jquery.fileupload.css">
     <!-- jQuery UI style -->
-    <link rel="stylesheet" href="css/jquery-ui.css">
+    <!--<link rel="stylesheet" href="css/jquery-ui.css">-->
     <!-- Generic page styles -->
     <link rel="stylesheet" href="css/style.css">
 
     <script src="js/jquery.min.js"></script>
     <script src="js/jquery-ui.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
     <!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
     <script src="js/jquery.iframe-transport.js"></script>
     <!-- The basic File Upload plugin -->
     <script src="js/jquery.fileupload.js"></script>
-
-    <script>
-        $(function () {
-            $('#tabs').tabs();
-        });
-    </script>
 </head>
 
 <body>
-<div id="tabs">
-    <ul id="myTab" class="nav nav-tabs">
-        <li><a href="#order-tab">Objednávky</a></li>
-        <li><a href="#rules-tab">Pravidla</a></li>
-        <li><a href="#catalogue-tab">Katalog zboží</a></li>
-    </ul>
-    <div id="order-tab">
-        <p>Objednávky. Objednávky. Objednávky. Objednávky. Objednávky. Objednávky. Objednávky. Objednávky. </p>
-    </div>
+<div class="container">
+    <div class="row">
+        <div class="col-xl-12">
+            <div id="tabs">
+                <ul id="myTab" class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#order-tab">Orders</a></li>
+                    <li><a data-toggle="tab" href="#rules-tab">Rules</a></li>
+                    <li><a data-toggle="tab" href="#catalogue-tab">Product list</a></li>
+                </ul>
 
-    <!-- R U L E S -->
-    <div id="rules-tab">
-        <button id="new-rule-dlg-btn">Vytvořit pravidlo</button>
-        <button id="rename-rule-dlg-btn">Přejmenovat pravidlo</button>
-        <button id="delete-rule-dlg-btn">Odstranit pravidlo</button>
-        <ul id="rule-list"></ul>
-    </div>
+                <div class="tab-content">
 
-    <!-- C A T A L O G U E -->
-    <div id="catalogue-tab">
-        <span class="btn btn-success fileinput-button">
-            <i class="glyphicon glyphicon-plus"></i>
-            <span>Vyber katalog...</span>
-            <input id="fileupload" type="file" name="file" data-url="/api/v1/catalogue">
-        </span>
-        <br/>
-        <br/>
-        <div id="progress" class="progress">
-            <div class="progress-bar progress-bar-success"></div>
-        </div>
-        <div id="successdiv" class="ui-widget" style="display: none">
-            <div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em;">
-                <p>
-                    <span class="ui-icon ui-icon-check" style="float: left; margin-right: .3em;"></span>
-                    <span id="success-msg"></span>
-                </p>
+                <div id="order-tab" class="tab-pane fade in active">
+                    <p>Objednávky. Objednávky. Objednávky. Objednávky. Objednávky. Objednávky. Objednávky. Objednávky. </p>
+                </div>
+
+                <!-- R U L E S -->
+                <div id="rules-tab" class="tab-pane fade">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <button id="new-rule-dlg-btn" type="button" class="btn btn-success">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                        New
+                                    </button>
+                                </span>
+                                <input type="text" class="form-control" placeholder="...">
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            Rule detail buttons here
+                        </div>
+                    </div>
+                    <div class="row vertical-space">
+                        <div class="col-md-3">
+                            <ul id="rule-list" class="list-group"></ul>
+                        </div>
+                        <div class="col-md-9">
+                            Rule detail here
+                        </div>
+                    </div>
+                </div>
+
+                <!-- C A T A L O G U E -->
+                <div id="catalogue-tab" class="tab-pane fade">
+                    <span class="btn btn-success fileinput-button">
+                        <i class="glyphicon glyphicon-upload"></i>
+                        <span>Upload product list</span>
+                        <input id="fileupload" type="file" name="file" data-url="/api/v1/catalogue">
+                    </span>
+                    <br/>
+                    <br/>
+                    <div id="progress" class="progress">
+                        <div class="progress-bar progress-bar-success"></div>
+                    </div>
+                    <div id="successdiv" class="ui-widget" style="display: none">
+                        <div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em;">
+                            <p>
+                                <span class="ui-icon ui-icon-check" style="float: left; margin-right: .3em;"></span>
+                                <span id="success-msg"></span>
+                            </p>
+                        </div>
+                    </div>
+                    <div id="errordiv" class="ui-widget" style="display: none">
+                        <div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
+                            <p>
+                                <span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+                                <span id="error-msg"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                </div>
             </div>
         </div>
-        <div id="errordiv" class="ui-widget" style="display: none">
-            <div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
-                <p>
-                    <span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-                    <span id="error-msg"></span>
-                </p>
-            </div>
-        </div>
-        <div class="ui-widget">
-        </div>
     </div>
-
-    <!-- New rule dialogue -->
-    <div id="rule-dlg" title="Vytvořit pravidlo">
-        <input id="rule-name-inp" type="text" name="name">
-    </div>
-    <!-- Message dialog -->
-    <div id="dialog-message" title="">
-        <p></p>
-    </div>
-
 </div>
+
+<!-- New rule dialogue -->
+<div id="rule-dlg" title="Nové pravidlo">
+    <input id="rule-name-inp" type="text" name="name">
+</div>
+<!-- Message dialog -->
+<div id="dialog-message" title="">
+    <p></p>
+</div>
+
 <script>
     $(function () {
         $('#rule-dlg').dialog({
@@ -112,7 +135,6 @@
         });
 
         $('#new-rule-dlg-btn')
-                .button()
                 .click(function() {
                     $('#rule-name-inp').val('');
                     $('#rule-dlg').attr("mode", "create");
@@ -120,7 +142,6 @@
                 });
 
         $('#rename-rule-dlg-btn')
-                .button({disabled: true})
                 .click(function() {
                     var text = $("#rule-list").children(".ui-selected").text();
                     $('#rule-name-inp').val(text);
@@ -129,7 +150,6 @@
                 });
 
         $('#delete-rule-dlg-btn')
-                .button({disabled: true})
                 .click(function() {
                     var id = $("#rule-list").children(".ui-selected").attr('ruleId');
                     deleteRule(id);
@@ -152,16 +172,6 @@
                         var newIndex = ui.item.index();
                         var id = $(ui.item).attr("ruleid");
                         setRuleRank(id, newIndex);
-                    }
-                })
-                .selectable({
-                    filter:"li",
-                    cancel:".handle",
-                    selected: function( event, ui ) {
-                        updateRuleButtons();
-                    },
-                    unselected: function( event, ui ) {
-                        updateRuleButtons();
                     }
                 });
 
@@ -190,6 +200,60 @@
         }).prop('disabled', !$.support.fileInput)
                 .parent().addClass($.support.fileInput ? undefined : 'disabled');
     });
+
+    function updateRuleButtons() {
+        var count = $('#rule-list').children('.ui-selected').size();
+        if (count == 1) {
+            $('#rename-rule-dlg-btn').removeAttr('disabled');
+            $('#delete-rule-dlg-btn').removeAttr('disabled');
+        } else {
+            $('#rename-rule-dlg-btn').attr('disabled', 'disabled');
+            $('#delete-rule-dlg-btn').attr('disabled', 'disabled');
+        }
+    }
+
+    function showErrorDlg(message) {
+        $('#dialog-message').attr({"title":"Chyba!"});
+        $('#dialog-message > p').text(message);
+        $('#dialog-message').dialog('open');
+    }
+
+    function setRuleRank(id, rank) {
+        $.ajax({
+            type: 'PUT',
+            url: '/api/v1/rules/' + id + '/rank/' + rank,
+            contentType: 'application/json; charset=utf-8',
+            data: null,
+            error: function ($xhr) {
+                $('#dialog-message').attr({"title":"Chyba!"});
+                $('#dialog-message > p').text($xhr.responseJSON[0].desc);
+                $('#dialog-message').dialog('open');
+                loadRules()
+            }
+        });
+    }
+
+    function loadRules() {
+        $.ajax({
+            type: 'GET',
+            url: '/api/v1/rules',
+            dataType: 'json',
+            success: function (data) {
+                $('#rule-list').html('');
+                data.forEach(function(rule) {
+                    var deleteBtnId = '#btnDeleteRule' + rule.id;
+                    $('#rule-list').append('<li id="itemRule' + rule.id + '" ruleId="' + rule.id + '" class="list-group-item"><span class="handle"><span class="glyphicon glyphicon-resize-vertical"></span></span>' + rule.name +
+                            '<span id="' + deleteBtnId + '" class="btn btn-danger btn-xs remove-button glyphicon glyphicon-remove" onclick="deleteRule(' + rule.id + ')"></span></li>')
+                    $(deleteBtnId).click(function(e) {
+                        deleteRule(rule.id);
+                    })
+                })
+            },
+            error: function (data) {
+                alert('chyba');
+            }
+        });
+    }
 
     function createRule(ruleName) {
         $.ajax({
@@ -234,50 +298,6 @@
             error: function ($xhr) {
                 showErrorDlg($xhr.responseJSON[0].desc);
                 loadRules();
-            }
-        });
-    }
-
-    function updateRuleButtons() {
-        var count = $('#rule-list').children('.ui-selected').size();
-        $('#rename-rule-dlg-btn').button({disabled: count != 1});
-        $('#delete-rule-dlg-btn').button({disabled: count != 1});
-    }
-
-    function showErrorDlg(message) {
-        $('#dialog-message').attr({"title":"Chyba!"});
-        $('#dialog-message > p').text(message);
-        $('#dialog-message').dialog('open');
-    }
-
-    function setRuleRank(id, rank) {
-        $.ajax({
-            type: 'PUT',
-            url: '/api/v1/rules/' + id + '/rank/' + rank,
-            contentType: 'application/json; charset=utf-8',
-            data: null,
-            error: function ($xhr) {
-                $('#dialog-message').attr({"title":"Chyba!"});
-                $('#dialog-message > p').text($xhr.responseJSON[0].desc);
-                $('#dialog-message').dialog('open');
-                loadRules()
-            }
-        });
-    }
-
-    function loadRules() {
-        $.ajax({
-            type: 'GET',
-            url: '/api/v1/rules',
-            dataType: 'json',
-            success: function (data) {
-                $('#rule-list').html('');
-                data.forEach(function(rule) {
-                    $('#rule-list').append('<li ruleId="' + rule.id + '" class="ui-corner-all ui-widget"><div class="handle"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></div>' + rule.name + '</li>')
-                })
-            },
-            error: function (data) {
-                alert('chyba');
             }
         });
     }
