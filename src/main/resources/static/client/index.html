@@ -36,7 +36,7 @@
 
                 <div class="vspace"></div>
 
-                <div id="error-display"></div>
+                <div id="message-display"></div>
 
                 <div class="tab-content">
                     <!-- O R D E  R S -->
@@ -75,30 +75,14 @@
 
                     <!-- C A T A L O G U E -->
                     <div id="catalogue-tab" class="tab-pane fade">
-                        <span class="btn btn-success fileinput-button">
+                        <span class="btn btn-primary fileinput-button">
                             <i class="glyphicon glyphicon-upload"></i>
-                            <span>Upload product list</span>
+                            <span>Upload</span>
                             <input id="fileupload" type="file" name="file" data-url="/api/v1/catalogue">
                         </span>
                         <div class="vspace"></div>
                         <div id="progress" class="progress">
                             <div class="progress-bar progress-bar-success"></div>
-                        </div>
-                        <div id="successdiv" class="ui-widget" style="display: none">
-                            <div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em;">
-                                <p>
-                                    <span class="ui-icon ui-icon-check" style="float: left; margin-right: .3em;"></span>
-                                    <span id="success-msg"></span>
-                                </p>
-                            </div>
-                        </div>
-                        <div id="errordiv" class="ui-widget" style="display: none">
-                            <div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
-                                <p>
-                                    <span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-                                    <span id="error-msg"></span>
-                                </p>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -138,24 +122,18 @@
         $('#fileupload').fileupload({
             dataType: 'json',
             submit: function() {
-                $('#errordiv').hide();
-                $('#successdiv').hide();
-                $('#error-msg').text('');
-                $('#success-msg').text('');
             },
-            done: function (e, data) {
-                $('#success-msg').text('Načteno ' + data.result.numberOfArticlesImported + ' položek katalogu.');
-                $('#successdiv').show();
-                $('#progress .progress-bar').css('width', '0%');
+            success: function (result, textStatus, jqXHRa) {
+                var message = result.numberOfArticlesImported + ' products were successfuly loaded.';
+                displaySuccess(message);
             },
-            fail: function (e, data) {
-                $('#error-msg').text('Došlo k chybě. Katalog nebyl načten.');
-                $('#errordiv').show();
-                $('#progress .progress-bar').css('width', '0%');
+            error: function (jqXHR, textStatus, errorThrown) {
+                displayError(getErrorText(jqXHR));
+                $('#progress > .progress-bar').css('width', '0%');
             },
-            progress: function (e, data) {
+            progressall: function (e, data) {
                 var progress = parseInt(data.loaded / data.total * 100, 10);
-                $('#progress .progress-bar').css('width', progress + '%');
+                $('#progress > .progress-bar').css('width', progress + '%');
             }
         }).prop('disabled', !$.support.fileInput)
                 .parent().addClass($.support.fileInput ? undefined : 'disabled');
@@ -226,11 +204,21 @@
     function displayError(message) {
         var element = $('<div class="alert alert-danger"><strong>ERROR!</strong> ' + message + '</div>');
         element.hide();
-        $('#error-display').append(element);
+        $('#message-display').append(element);
         element.show(100);
         setTimeout(function() {
                 element.hide(500)
             }, 5000);
+    }
+
+    function displaySuccess(message) {
+        var element = $('<div class="alert alert-success"><strong>SUCCESS!</strong> ' + message + '</div>');
+        element.hide();
+        $('#message-display').append(element);
+        element.show(100);
+        setTimeout(function() {
+            element.hide(500)
+        }, 5000);
     }
 
     function renameRule(id, ruleName) {
