@@ -4,9 +4,9 @@ body {
   padding-top: 20px;
 }
 
-.vertical-space {
-  margin-top: 24px;
-  margin-bottom: 24px;
+.vspace {
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 ul#rule-list > li {
