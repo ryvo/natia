@@ -6,7 +6,7 @@ import org.apache.tomcat.jni.*;
 @UtilityClass
 public final class Errors {
 
-    @ErrorDescription(value = "1000", message = "Internal server error{#reason != null ? '. ' + #reason + '.' : ''}")
+    @ErrorDescription(value = "1000", message = "Internal server error")
     public  static final class INTERNAL_ERROR implements ErrorCode {}
 
     @ErrorDescription(value = "1001", message = "Resource '{resource}' with ID {id} not found")

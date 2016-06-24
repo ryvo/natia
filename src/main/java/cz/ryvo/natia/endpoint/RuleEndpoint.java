@@ -2,7 +2,12 @@ package cz.ryvo.natia.endpoint;
 
 import cz.ryvo.natia.api.CreateResult;
 import cz.ryvo.natia.api.Rule;
+import cz.ryvo.natia.api.RuleArticle;
 import cz.ryvo.natia.converter.RuleConverter;
+import cz.ryvo.natia.converter.RuleInputArticleConverter;
+import cz.ryvo.natia.converter.RuleOutputArticleConverter;
+import cz.ryvo.natia.domain.RuleInputArticleVO;
+import cz.ryvo.natia.domain.RuleOutputArticleVO;
 import cz.ryvo.natia.domain.RuleVO;
 import cz.ryvo.natia.service.RuleService;
 import io.swagger.annotations.Api;
@@ -34,6 +39,12 @@ public class RuleEndpoint {
 
     @Autowired
     private RuleConverter ruleConverter;
+
+    @Autowired
+    private RuleInputArticleConverter ruleInputArticleConverter;
+
+    @Autowired
+    private RuleOutputArticleConverter ruleOutputArticleConverter;
 
     @RequestMapping(method = GET)
     public List<Rule> listRules() {
@@ -67,5 +78,29 @@ public class RuleEndpoint {
     @RequestMapping(path = "/{ruleId}/rank/{rank}", method = PUT)
     public void setRuleRank(@PathVariable("ruleId") Long ruleId, @PathVariable("rank") Integer rank) {
         ruleService.setRuleRank(ruleId, rank);
+    }
+
+    @RequestMapping(path = "/{ruleId}/required-articles", method = GET)
+    public List<RuleArticle> getRequiredArticles(@PathVariable("ruleId") Long ruleId) {
+        return ruleInputArticleConverter.toApi(ruleService.getInputArticles(ruleId));
+    }
+
+    @RequestMapping(path = "/{ruleId}/gift-articles", method = GET)
+    public List<RuleArticle> getGiftArticles(@PathVariable("ruleId") Long ruleId) {
+        return ruleOutputArticleConverter.toApi(ruleService.getOutputArticles(ruleId));
+    }
+
+    @RequestMapping(path = "/{ruleId}/required-articles", method = POST)
+    public CreateResult addRequiredArticle(@PathVariable("ruleId") Long ruleId, @RequestBody @Valid RuleArticle article) {
+        RuleInputArticleVO articleVO = ruleInputArticleConverter.toDomain(article);
+        Long id = ruleService.createInputArticle(ruleId, articleVO);
+        return new CreateResult(id);
+    }
+
+    @RequestMapping(path = "/{ruleId}/gift-articles", method = POST)
+    public CreateResult addGiftArticle(@PathVariable("ruleId") Long ruleId, @RequestBody @Valid RuleArticle article) {
+        RuleOutputArticleVO articleVO = ruleOutputArticleConverter.toDomain(article);
+        Long id = ruleService.createOutputArticle(ruleId, articleVO);
+        return new CreateResult(id);
     }
 }

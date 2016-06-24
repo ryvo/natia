@@ -1,5 +1,7 @@
 package cz.ryvo.natia.service;
 
+import cz.ryvo.natia.domain.RuleInputArticleVO;
+import cz.ryvo.natia.domain.RuleOutputArticleVO;
 import cz.ryvo.natia.domain.RuleVO;
 import lombok.NonNull;
 
@@ -19,4 +21,12 @@ public interface RuleService {
     void deleteRule(@Nonnull Long id);
 
     void setRuleRank(@NonNull Long id, @NonNull Integer newOrder);
+
+    List<RuleInputArticleVO> getInputArticles(@NonNull Long id);
+
+    List<RuleOutputArticleVO> getOutputArticles(@NonNull Long id);
+
+    Long createInputArticle(@NonNull Long ruleId, @NonNull RuleInputArticleVO article);
+
+    Long createOutputArticle(@NonNull Long ruleId, @NonNull RuleOutputArticleVO article);
 }

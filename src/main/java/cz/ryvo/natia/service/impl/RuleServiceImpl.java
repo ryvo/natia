@@ -1,18 +1,24 @@
 package cz.ryvo.natia.service.impl;
 
 import com.google.common.collect.ImmutableMap;
+import cz.ryvo.natia.domain.ArticleVO;
+import cz.ryvo.natia.domain.RuleInputArticleVO;
+import cz.ryvo.natia.domain.RuleOutputArticleVO;
 import cz.ryvo.natia.domain.RuleVO;
 import cz.ryvo.natia.error.Errors;
 import cz.ryvo.natia.error.Errors.INVALID_ITEM_RANK;
 import cz.ryvo.natia.exception.BadRequestException;
 import cz.ryvo.natia.exception.NotFoundException;
+import cz.ryvo.natia.repository.ArticleRepository;
+import cz.ryvo.natia.repository.RuleInputArticleRepository;
+import cz.ryvo.natia.repository.RuleOutputArticleRepository;
 import cz.ryvo.natia.repository.RuleRepository;
 import cz.ryvo.natia.service.RuleService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 import static java.util.Collections.singletonMap;
@@ -24,6 +30,12 @@ public class RuleServiceImpl implements RuleService {
 
     @Autowired
     private RuleRepository ruleRepository;
+
+    @Autowired
+    private RuleInputArticleRepository ruleInputArticleRepository;
+
+    @Autowired
+    private RuleOutputArticleRepository ruleOutputArticleRepository;
 
     @Override
     public List<RuleVO> getRules() {
@@ -106,6 +118,36 @@ public class RuleServiceImpl implements RuleService {
 
         rerankRules(persistedRule.getRank(), newRank);
         persistedRule.setRank(newRank);
+    }
+
+    @Override
+    public List<RuleInputArticleVO> getInputArticles(@NonNull Long ruleId) {
+        return ruleInputArticleRepository.findManyByRuleId(ruleId);
+    }
+
+    @Override
+    public List<RuleOutputArticleVO> getOutputArticles(@NonNull Long ruleId) {
+        return ruleOutputArticleRepository.findManyByRuleId(ruleId);
+    }
+
+    @Override
+    public Long createInputArticle(@NonNull Long ruleId, @NonNull RuleInputArticleVO article) {
+        RuleVO rule = ruleRepository.findOne(ruleId);
+        if (rule == null) {
+            throw new NotFoundException("rule", ruleId);
+        }
+        article.setRule(rule);
+        return ruleInputArticleRepository.save(article).getId();
+    }
+
+    @Override
+    public Long createOutputArticle(@NonNull Long ruleId, @NonNull RuleOutputArticleVO article) {
+        RuleVO rule = ruleRepository.findOne(ruleId);
+        if (rule == null) {
+            throw new NotFoundException("rule", ruleId);
+        }
+        article.setRule(rule);
+        return ruleOutputArticleRepository.save(article).getId();
     }
 
     private void rerankRules(@NonNull Integer oldIndex, @NonNull Integer newIndex) {

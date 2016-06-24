@@ -6,6 +6,7 @@
     <title>Natia</title>
     <!-- Bootstrap styles -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-editable.css">
     <!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
     <link rel="stylesheet" href="css/jquery.fileupload.css">
     <!-- jQuery UI style -->
@@ -16,6 +17,8 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/jquery-ui.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap-editable.min.js"></script>
+    <script src="js/typeahead.bundle.js"></script>
     <!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
     <script src="js/jquery.iframe-transport.js"></script>
     <!-- The basic File Upload plugin -->
@@ -59,16 +62,37 @@
                                 </div>
                             </div>
                             <div class="col-md-9">
-                                Rule detail buttons here
+                                <div class="input-group">
+                                    <span class="input-group-btn">
+                                        <button id="add-input-product-btn" type="button" class="btn btn-success">
+                                            Add required product
+                                            <span class="glyphicon glyphicon-arrow-down"></span>
+                                        </button>
+                                    </span>
+                                    <input id="product-inp" type="text" class="form-control" autocomplete="off" spellcheck="false">
+                                    <span class="input-group-btn">
+                                        <button id="add-output-product-btn" type="button" class="btn btn-success">
+                                            <span class="glyphicon glyphicon-arrow-down"></span>
+                                            Add gift product
+                                        </button>
+                                    </span>
+                                </div>
                             </div>
                         </div>
+
                         <div class="vspace"></div>
+
                         <div class="row vertical-space">
                             <div class="col-md-3">
                                 <ul id="rule-list" class="list-group"></ul>
                             </div>
                             <div class="col-md-9">
-                                Rule detail here
+                                <div class="col-md-6">
+                                    <ul id="required-product-list" class="list-group"></ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul id="gift-product-list" class="list-group"></ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -97,7 +121,15 @@
 </div>
 
 <script>
+    // setting defaults for the editable
+    $.fn.editable.defaults.mode = 'inline';
+    $.fn.editable.defaults.showbuttons = false;
+
+    selectedRuleId = null;
+
     $(function () {
+        $('.editable').editable();
+
         $('#create-rule-btn')
                 .prop('disabled',true)
                 .click(function() {
@@ -105,7 +137,7 @@
                 });
 
         $('#new-rule-name-inp')
-                .keyup(function(){
+                .on('input', function(){
                     $('#create-rule-btn').prop('disabled', this.value == "" ? true : false);
                 });
 
@@ -118,6 +150,26 @@
                         setRuleRank(id, newIndex);
                     }
                 });
+
+        $('#add-input-product-btn')
+                .prop('disabled', true)
+                .click(function() {
+
+                });
+
+        $('#add-output-product-btn')
+                .prop('disabled', true)
+                .click(function() {
+
+                });
+
+        $('#product-inp')
+//                .prop('disabled', true)
+                .on('input', function(){
+                    var disabled = this.value == "";
+                    $('#add-input-product-btn').prop('disabled', disabled);
+                    $('#add-output-product-btn').prop('disabled', disabled);
+                })
 
         $('#fileupload').fileupload({
             dataType: 'json',
@@ -136,7 +188,35 @@
                 $('#progress > .progress-bar').css('width', progress + '%');
             }
         }).prop('disabled', !$.support.fileInput)
-                .parent().addClass($.support.fileInput ? undefined : 'disabled');
+            .parent().addClass($.support.fileInput ? undefined : 'disabled');
+
+        var bloodhound = new Bloodhound({
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            datumTokenizer: Bloodhound.tokenizers.whitespace,
+            remote: {
+                url: '/api/v1/catalogue/articles/search?pattern=%QUERY',
+                wildcard: '%QUERY',
+            },
+        });
+
+        $('#product-inp').typeahead({
+            hint: true,
+            highlight: true,
+            minLength: 4,
+            display: function (data) {
+                return data.name;
+            }
+        },{
+            name: 'products',
+            source: bloodhound,
+            limit: 100,
+            displayKey: 'code',
+            templates: {
+                suggestion: function(data){
+                    return '<tr><td class="item-code">' + data.code + '</td><td class="item-name">' + data.name + '</td></tr>';
+                }
+            }
+        });
     });
 
     function setRuleRank(id, rank) {
@@ -155,6 +235,7 @@
     }
 
     function loadRules() {
+        selectRule(null);
         $.ajax({
             type: 'GET',
             url: '/api/v1/rules',
@@ -162,16 +243,79 @@
             success: function (data) {
                 $('#rule-list').html('');
                 data.forEach(function(rule) {
-                    var deleteBtnId = '#btnDeleteRule' + rule.id;
-                    $('#rule-list').append('<li id="itemRule' + rule.id + '" ruleId="' + rule.id + '" class="list-group-item"><span class="handle"><span class="glyphicon glyphicon-resize-vertical"></span></span>' + rule.name +
-                            '<span id="' + deleteBtnId + '" class="btn btn-danger btn-xs remove-button glyphicon glyphicon-remove" onclick="deleteRule(' + rule.id + ')"></span></li>')
-                    $(deleteBtnId).click(function(e) {
-                        deleteRule(rule.id);
-                    })
+                    var item = $(
+                            '<li ruleId="' + rule.id + '" class="rule-item list-group-item"> ' +
+                            '  <span class="handle">' +
+                            '    <span class="glyphicon glyphicon-resize-vertical"></span>' +
+                            '  </span>' +
+                            '  <span class="editable">' + rule.name + '</span>' +
+                            '  <span class="btn btn-danger btn-xs remove-button glyphicon glyphicon-remove"></span>' +
+                            '</li>'
+                        )
+                        .click(function (e) {
+                            selectRule(rule.id);
+                        });
+                    $('#rule-list').append(item)
+                    if(selectedRuleId == rule.id) {
+                        selectRule(rule.id);
+                    }
+                    item.find('.editable').editable()
+                            .on('save', function (e, params) {
+                                renameRule(rule.id, params.newValue);
+                            });
+                    item.find('.remove-button')
+                            .on('click', function (e) {
+                                e.stopPropagation();
+                                deleteRule(rule.id);
+                            });
                 })
             },
             error: function ($xhr) {
                 displayError(getErrorText($xhr));
+            }
+        });
+    }
+
+    function loadRequiredProducts(ruleId) {
+        $.ajax({
+            type: 'GET',
+            url: '/api/v1/rules/' + ruleId + '/required-articles',
+            dataType: 'json',
+            success: function(data) {
+                data.forEach(function(article) {
+                    var item = $(
+                            '<li articleId="' + article.id + '" class="rule-item list-group-item"> ' +
+                            '  <span>' + article.code + '</span>' +
+                            '  <span class="editable">' + article.amount + '</span>' +
+                            '  <span class="btn btn-danger btn-xs remove-button glyphicon glyphicon-remove"></span>' +
+                            '</li>'
+                    );
+                })
+            },
+            error: function(xhr) {
+                displayError(getErrorText(xhr));
+            }
+        });
+    }
+
+    function loadGiftProducts(ruleId) {
+        $.ajax({
+            type: 'GET',
+            url: '/api/v1/rules/' + ruleId + '/gift-articles',
+            dataType: 'json',
+            success: function(data) {
+                data.forEach(function(article) {
+                    var item = $(
+                            '<li articleId="' + article.id + '" class="rule-item list-group-item"> ' +
+                            '  <span>' + article.code + '</span>' +
+                            '  <span class="editable">' + article.amount + '</span>' +
+                            '  <span class="btn btn-danger btn-xs remove-button glyphicon glyphicon-remove"></span>' +
+                            '</li>'
+                    );
+                })
+            },
+            error: function(xhr) {
+                displayError(getErrorText(xhr));
             }
         });
     }
@@ -242,6 +386,9 @@
             type: 'DELETE',
             url: '/api/v1/rules/' + id,
             success: function(data) {
+                if(selectedRuleId == id) {
+                    selectedRuleId = null;
+                }
                 loadRules();
             },
             error: function ($xhr) {
@@ -249,6 +396,42 @@
                 loadRules();
             }
         });
+    }
+
+    function addRequiredProduct(code) {
+        $.ajax({
+            type: 'POST',
+            url: '/api/v1/rules/' + ruleId + '/required-articles',
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            data: JSON.stringify({'code': code, 'amount': 1}),
+            success: function(data) {
+                loadRequiredProducts();
+            },
+            error: function(xhr) {
+                displayError(getErrorText(xhr));
+            }
+        });
+    }
+
+    function selectRule(id) {
+        $('.rule-item:not([ruleId=' + id + '])').removeClass('selected-item');
+        if(id) {
+            selectedRuleId = id;
+            loadRequiredProducts(id);
+            loadGiftProducts(id);
+            $('.rule-item[ruleId=' + id + ']').addClass('selected-item');
+
+        } else {
+            selectedRuleId = null;
+        }
+        var selectedItems = $('#rule-list').find('.rule-item.selected-item');
+        var disabled = !selectedItems || selectedItems.length != 1;
+        $('#product-inp').prop('disabled', disabled);
+    }
+
+    function enableTypeahead() {
+
     }
 
     loadRules();

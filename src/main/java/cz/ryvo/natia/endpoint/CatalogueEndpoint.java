@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
@@ -34,7 +35,7 @@ public class CatalogueEndpoint {
         return new CatalogueImportResult(catalogueService.importCatalogue(file));
     }
 
-    @RequestMapping(path = "/articles/search", method = POST)
+    @RequestMapping(path = "/articles/search", method = GET)
     @ApiOperation(value = "Search articles by code or description")
     public List<Article> searchArticles(@RequestParam("pattern") String pattern) {
         return articleConverter.toApi(catalogueService.searchArticles(pattern));

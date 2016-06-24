@@ -21,6 +21,7 @@
     <logger name="org.hibernate.jdbc.ConnectionManager" level="DEBUG"/>
     <logger name="org.hibernate.type" level="TRACE"/>
     <logger name="org.springframework.orm.jpa.JpaTransactionManager" level="DEBUG"/>
+    <logger name="com.h2database" level="TRACE"/>
 
     <root>
         <level value="INFO"/>

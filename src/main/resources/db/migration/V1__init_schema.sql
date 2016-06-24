@@ -11,23 +11,25 @@ CREATE TABLE rule (
 );
 
 CREATE TABLE rule_input_article (
+  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   rule_id BIGINT NOT NULL,
   code VARCHAR(50) NOT NULL,
   description VARCHAR(128) NOT NULL,
   amount INT NOT NULL,
   rank INT NOT NULL,
-  PRIMARY KEY (rule_id, code),
+  UNIQUE (rule_id, code),
   UNIQUE (rule_id, rank),
   FOREIGN KEY (rule_id) REFERENCES rule (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE rule_output_article (
+  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   rule_id BIGINT NOT NULL,
   code VARCHAR(50) NOT NULL,
   description VARCHAR(128) NOT NULL,
   amount INT NOT NULL,
   rank INT NOT NULL,
-  PRIMARY KEY (rule_id, code),
+  UNIQUE (rule_id, code),
   UNIQUE (rule_id, rank),
   FOREIGN KEY (rule_id) REFERENCES rule (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
