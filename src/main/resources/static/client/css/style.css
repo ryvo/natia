@@ -148,3 +148,29 @@ ul#rule-list .placeholder { background: yellow; }
   line-height: 1.33;
 }
 /* Typehead Bootsrap 3 style fix END */
+
+table {
+  width: 100%;
+}
+
+td .article-code {
+  text-align: left;
+  vertical-align: middle;
+}
+
+td.article-amount {
+  width: 46px;
+  padding: 0 8px 0 8px;
+  text-align: right;
+  vertical-align: top;
+}
+
+.article-delete-btn {
+  vertical-align: top;
+  margin: 0 8px 0 0;
+}
+
+td.article-amount input {
+  width: 40px !important;
+  text-align: right;
+}

@@ -53,4 +53,9 @@ public class CatalogueServiceImpl implements CatalogueService {
             throw new BadRequestException(SEARCH_PARAMS_TOO_INACCURATE.class);
         }
     }
+
+    @Override
+    public ArticleVO getArticleByCode(@NonNull String code) {
+        return articleRepository.findOne(code);
+    }
 }

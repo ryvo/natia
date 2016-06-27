@@ -17,7 +17,7 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/jquery-ui.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script src="js/bootstrap-editable.min.js"></script>
+    <script src="js/bootstrap-editable.js"></script>
     <script src="js/typeahead.bundle.js"></script>
     <!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
     <script src="js/jquery.iframe-transport.js"></script>
@@ -154,17 +154,16 @@
         $('#add-input-product-btn')
                 .prop('disabled', true)
                 .click(function() {
-
+                    addRequiredProduct(selectedRuleId, $('#product-inp').val());
                 });
 
         $('#add-output-product-btn')
                 .prop('disabled', true)
                 .click(function() {
-
+                    addGiftProduct(selectedRuleId, $('#product-inp').val());
                 });
 
         $('#product-inp')
-//                .prop('disabled', true)
                 .on('input', function(){
                     var disabled = this.value == "";
                     $('#add-input-product-btn').prop('disabled', disabled);
@@ -190,33 +189,7 @@
         }).prop('disabled', !$.support.fileInput)
             .parent().addClass($.support.fileInput ? undefined : 'disabled');
 
-        var bloodhound = new Bloodhound({
-            queryTokenizer: Bloodhound.tokenizers.whitespace,
-            datumTokenizer: Bloodhound.tokenizers.whitespace,
-            remote: {
-                url: '/api/v1/catalogue/articles/search?pattern=%QUERY',
-                wildcard: '%QUERY',
-            },
-        });
-
-        $('#product-inp').typeahead({
-            hint: true,
-            highlight: true,
-            minLength: 4,
-            display: function (data) {
-                return data.name;
-            }
-        },{
-            name: 'products',
-            source: bloodhound,
-            limit: 100,
-            displayKey: 'code',
-            templates: {
-                suggestion: function(data){
-                    return '<tr><td class="item-code">' + data.code + '</td><td class="item-name">' + data.name + '</td></tr>';
-                }
-            }
-        });
+        disableTypeahead();
     });
 
     function setRuleRank(id, rank) {
@@ -269,6 +242,8 @@
                                 deleteRule(rule.id);
                             });
                 })
+                loadRequiredProducts(selectedRuleId);
+                loadGiftProducts(selectedRuleId);
             },
             error: function ($xhr) {
                 displayError(getErrorText($xhr));
@@ -277,6 +252,10 @@
     }
 
     function loadRequiredProducts(ruleId) {
+        $('#required-product-list').empty();
+        if (!ruleId) {
+            return;
+        }
         $.ajax({
             type: 'GET',
             url: '/api/v1/rules/' + ruleId + '/required-articles',
@@ -284,12 +263,34 @@
             success: function(data) {
                 data.forEach(function(article) {
                     var item = $(
-                            '<li articleId="' + article.id + '" class="rule-item list-group-item"> ' +
-                            '  <span>' + article.code + '</span>' +
-                            '  <span class="editable">' + article.amount + '</span>' +
-                            '  <span class="btn btn-danger btn-xs remove-button glyphicon glyphicon-remove"></span>' +
+                            '<li ruleId="' + ruleId + '" articleId="' + article.id + '" class="rule-item list-group-item"> ' +
+                            '  <table><tr>' +
+                            '    <td class="article-delete-btn"><div class="article-delete-btn btn btn-danger btn-xs remove-button glyphicon glyphicon-remove"></div></td>' +
+                            '    <td class="article-code"><strong>' + article.code + '</strong></i></td>' +
+                            '    <td class="article-amount"><span class="editable"><strong>' + article.amount + '</strong></span></td>' +
+                            '  </tr><tr>' +
+                            '    <td class="article-delete-btn"></td>' +
+                            '    <td class="article-code"><i>' + article.description + '</i></td>' +
+                            '    <td class="article-amount"></td>' +
+                            '  </tr></table>' +
                             '</li>'
-                    );
+                    ).appendTo($('#required-product-list'));
+
+                    item.find('.editable').editable({clear:false})
+                        .on('shown', function(e, editable) {
+                            setTimeout(function() {
+                                editable.input.$input.select();
+                            }, 0);
+                        })
+                        .on('save', function (e, params) {
+                            updateRequiredArticleAmount(article.id, params.newValue);
+                        });
+
+                    item.find('.article-delete-btn')
+                        .on('click', function (e) {
+                            e.stopPropagation();
+                            deleteRequiredArticle(article.id);
+                        });
                 })
             },
             error: function(xhr) {
@@ -299,6 +300,10 @@
     }
 
     function loadGiftProducts(ruleId) {
+        $('#gift-product-list').empty();
+        if (!ruleId) {
+            return;
+        }
         $.ajax({
             type: 'GET',
             url: '/api/v1/rules/' + ruleId + '/gift-articles',
@@ -306,12 +311,34 @@
             success: function(data) {
                 data.forEach(function(article) {
                     var item = $(
-                            '<li articleId="' + article.id + '" class="rule-item list-group-item"> ' +
-                            '  <span>' + article.code + '</span>' +
-                            '  <span class="editable">' + article.amount + '</span>' +
-                            '  <span class="btn btn-danger btn-xs remove-button glyphicon glyphicon-remove"></span>' +
+                            '<li ruleId="' + ruleId + '" articleId="' + article.id + '" class="rule-item list-group-item"> ' +
+                            '  <table><tr>' +
+                            '    <td class="article-delete-btn"><div class="article-delete-btn btn btn-danger btn-xs remove-button glyphicon glyphicon-remove"></div></td>' +
+                            '    <td class="article-code"><strong>' + article.code + '</strong></i></td>' +
+                            '    <td class="article-amount"><span class="editable"><strong>' + article.amount + '</strong></span></td>' +
+                            '  </tr><tr>' +
+                            '    <td class="article-delete-btn"></td>' +
+                            '    <td class="article-code"><i>' + article.description + '</i></td>' +
+                            '    <td class="article-amount"></td>' +
+                            '  </tr></table>' +
                             '</li>'
-                    );
+                    ).appendTo($('#gift-product-list'));
+
+                    item.find('.editable').editable({clear:false})
+                            .on('shown', function(e, editable) {
+                                setTimeout(function() {
+                                    editable.input.$input.select();
+                                }, 0);
+                            })
+                            .on('save', function (e, params) {
+                                updateGiftArticleAmount(article.id, params.newValue);
+                            });
+
+                    item.find('.article-delete-btn')
+                            .on('click', function (e) {
+                                e.stopPropagation();
+                                deleteGiftArticle(article.id);
+                            });
                 })
             },
             error: function(xhr) {
@@ -329,6 +356,7 @@
             data: JSON.stringify({'name': ruleName}),
             success: function(data) {
                 $('#new-rule-name-inp').val('');
+                selectedRuleId = null;
                 loadRules();
             },
             error: function ($xhr) {
@@ -398,7 +426,7 @@
         });
     }
 
-    function addRequiredProduct(code) {
+    function addRequiredProduct(ruleId, code) {
         $.ajax({
             type: 'POST',
             url: '/api/v1/rules/' + ruleId + '/required-articles',
@@ -406,10 +434,88 @@
             dataType: 'json',
             data: JSON.stringify({'code': code, 'amount': 1}),
             success: function(data) {
-                loadRequiredProducts();
+                clearTypeahead();
+                loadRequiredProducts(ruleId);
             },
             error: function(xhr) {
                 displayError(getErrorText(xhr));
+                loadRequiredProducts(ruleId);
+            }
+        });
+    }
+
+
+    function updateRequiredArticleAmount(id, amount) {
+        $.ajax({
+            type: 'PUT',
+            url: '/api/v1/rules/required-articles/' + id + '/amount/' + amount,
+            success: function(data) {
+                loadRequiredProducts(selectedRuleId);
+            },
+            error: function ($xhr) {
+                displayError(getErrorText($xhr));
+                loadRequiredProducts(selectedRuleId);
+            }
+        });
+    }
+
+    function deleteRequiredArticle(id) {
+        $.ajax({
+            type: 'DELETE',
+            url: '/api/v1/rules/required-articles/' + id,
+            success: function(data) {
+                loadRequiredProducts(selectedRuleId);
+            },
+            error: function ($xhr) {
+                displayError(getErrorText($xhr));
+                loadRequiredProducts(selectedRuleId);
+            }
+        });
+    }
+
+    function addGiftProduct(ruleId, code) {
+        $.ajax({
+            type: 'POST',
+            url: '/api/v1/rules/' + ruleId + '/gift-articles',
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            data: JSON.stringify({'code': code, 'amount': 1}),
+            success: function(data) {
+                clearTypeahead();
+                loadGiftProducts(ruleId);
+            },
+            error: function(xhr) {
+                displayError(getErrorText(xhr));
+                loadGiftProducts(ruleId);
+            }
+        });
+    }
+
+
+    function updateGiftArticleAmount(id, amount) {
+        $.ajax({
+            type: 'PUT',
+            url: '/api/v1/rules/gift-articles/' + id + '/amount/' + amount,
+            success: function(data) {
+                loadGiftProducts(selectedRuleId);
+            },
+            error: function ($xhr) {
+                displayError(getErrorText($xhr));
+                loadGiftProducts(selectedRuleId);
+            }
+        });
+    }
+
+    function deleteGiftArticle(id) {
+        $.ajax({
+            type: 'DELETE',
+            url: '/api/v1/rules/gift-articles/' + id,
+            success: function(data) {
+                loadGiftProducts(selectedRuleId);
+            },
+            error: function ($xhr) {
+                displayError(getErrorText($xhr));
+                loadGiftProducts(selectedRuleId);
             }
         });
     }
@@ -427,11 +533,51 @@
         }
         var selectedItems = $('#rule-list').find('.rule-item.selected-item');
         var disabled = !selectedItems || selectedItems.length != 1;
-        $('#product-inp').prop('disabled', disabled);
+        if (disabled) {
+            disableTypeahead()
+        } else {
+            enableTypeahead();
+        }
     }
 
-    function enableTypeahead() {
+    var bloodhound = new Bloodhound({
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: {
+            url: '/api/v1/catalogue/articles/search?pattern=%QUERY',
+            wildcard: '%QUERY',
+        },
+    });
 
+    function enableTypeahead() {
+        $('#product-inp').prop('disabled', false);
+        $('#product-inp').typeahead({
+            hint: true,
+            highlight: true,
+            minLength: 4,
+            display: function (data) {
+                return data.name;
+            }
+        },{
+            name: 'products',
+            source: bloodhound,
+            limit: 100,
+            displayKey: 'code',
+            templates: {
+                suggestion: function(data){
+                    return '<tr><td class="item-code">' + data.code + '</td><td class="item-name">' + data.name + '</td></tr>';
+                }
+            }
+        });
+    }
+
+    function disableTypeahead() {
+        $('#product-inp').prop('disabled', true);
+        $('#product-inp').typeahead('destroy');
+    }
+
+    function clearTypeahead() {
+        $('div#product-inp input').val('');
     }
 
     loadRules();

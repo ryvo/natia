@@ -97,10 +97,30 @@ public class RuleEndpoint {
         return new CreateResult(id);
     }
 
+    @RequestMapping(path = "/required-articles/{articleId}", method = DELETE)
+    public void deleteRequiredArticle(@PathVariable("articleId") Long articleId) {
+        ruleService.deleteInputArticle(articleId);
+    }
+
+    @RequestMapping(path = "/required-articles/{articleId}/amount/{amount}", method = PUT)
+    public void updateRequiredArticleAmount(@PathVariable("articleId") Long articleId, @PathVariable("amount") Integer amount) {
+        ruleService.updateInputArticleAmount(articleId, amount);
+    }
+
     @RequestMapping(path = "/{ruleId}/gift-articles", method = POST)
     public CreateResult addGiftArticle(@PathVariable("ruleId") Long ruleId, @RequestBody @Valid RuleArticle article) {
         RuleOutputArticleVO articleVO = ruleOutputArticleConverter.toDomain(article);
         Long id = ruleService.createOutputArticle(ruleId, articleVO);
         return new CreateResult(id);
+    }
+
+    @RequestMapping(path = "/gift-articles/{articleId}", method = DELETE)
+    public void deleteGiftArticle(@PathVariable("articleId") Long articleId) {
+        ruleService.deleteOutputArticle(articleId);
+    }
+
+    @RequestMapping(path = "/gift-articles/{articleId}/amount/{amount}", method = PUT)
+    public void updateGiftArticleAmount(@PathVariable("articleId") Long articleId, @PathVariable("amount") Integer amount) {
+        ruleService.updateOutputArticleAmount(articleId, amount);
     }
 }

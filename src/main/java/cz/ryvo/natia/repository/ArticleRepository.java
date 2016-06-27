@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface ArticleRepository extends JpaRepository<ArticleVO, String> {
 
-    @Query("SELECT e FROM #{#entityName} e WHERE e.code LIKE CONCAT(:pattern, '%') OR e.description LIKE CONCAT('%', :pattern, '%')")
+    @Query("SELECT e FROM #{#entityName} e WHERE lower(e.code) LIKE concat(lower(:pattern), '%') OR lower(e.description) LIKE concat('%', lower(:pattern), '%')")
     List<ArticleVO> findManyByPattern(@Param("pattern") String pattern);
 }

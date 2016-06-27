@@ -18,6 +18,7 @@ public class RuleOutputArticleConverter implements BiConverter<RuleArticle, Rule
 
     public @Nullable RuleArticle toApi(@Nullable RuleOutputArticleVO domain) {
         RuleArticle api = new RuleArticle();
+        api.setId(domain.getId());
         api.setCode(domain.getCode());
         api.setDescription(domain.getDescription());
         api.setAmount(domain.getAmount());

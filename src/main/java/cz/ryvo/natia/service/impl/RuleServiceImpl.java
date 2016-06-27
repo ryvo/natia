@@ -13,6 +13,7 @@ import cz.ryvo.natia.repository.ArticleRepository;
 import cz.ryvo.natia.repository.RuleInputArticleRepository;
 import cz.ryvo.natia.repository.RuleOutputArticleRepository;
 import cz.ryvo.natia.repository.RuleRepository;
+import cz.ryvo.natia.service.CatalogueService;
 import cz.ryvo.natia.service.RuleService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class RuleServiceImpl implements RuleService {
 
     @Autowired
     private RuleRepository ruleRepository;
+
+    @Autowired
+    private CatalogueService catalogueService;
 
     @Autowired
     private RuleInputArticleRepository ruleInputArticleRepository;
@@ -132,22 +136,98 @@ public class RuleServiceImpl implements RuleService {
 
     @Override
     public Long createInputArticle(@NonNull Long ruleId, @NonNull RuleInputArticleVO article) {
+        requireNonNull(article.getCode(), "article.code must not be null");
+
         RuleVO rule = ruleRepository.findOne(ruleId);
         if (rule == null) {
             throw new NotFoundException("rule", ruleId);
         }
-        article.setRule(rule);
-        return ruleInputArticleRepository.save(article).getId();
+
+        RuleInputArticleVO inputArticle = new RuleInputArticleVO();
+        inputArticle.setRule(rule);
+        inputArticle.setCode(article.getCode());
+        inputArticle.setAmount(1);
+
+        ArticleVO tmpArticle = catalogueService.getArticleByCode(article.getCode());
+        inputArticle.setInCatalogue(tmpArticle != null);
+
+        if (tmpArticle != null) {
+            inputArticle.setDescription(tmpArticle.getDescription());
+        } else {
+            if (article.getDescription() != null) {
+                inputArticle.setDescription(article.getDescription());
+            } else {
+                inputArticle.setDescription("Unknown product");
+            }
+        }
+
+        return ruleInputArticleRepository.save(inputArticle).getId();
+    }
+
+    @Override
+    public void deleteInputArticle(@NonNull Long articleId) {
+        RuleInputArticleVO article = ruleInputArticleRepository.findOne(articleId);
+        if (article != null) {
+            ruleInputArticleRepository.delete(article);
+        }
+    }
+
+    @Override
+    public void updateInputArticleAmount(@NonNull Long articleId, @NonNull Integer amount) {
+        RuleInputArticleVO article = ruleInputArticleRepository.findOne(articleId);
+        if (article == null) {
+            throw new NotFoundException("inputArticle", articleId);
+        }
+        article.setAmount(amount);
+        ruleInputArticleRepository.save(article);
     }
 
     @Override
     public Long createOutputArticle(@NonNull Long ruleId, @NonNull RuleOutputArticleVO article) {
+        requireNonNull(article.getCode(), "article.code must not be null");
+
         RuleVO rule = ruleRepository.findOne(ruleId);
         if (rule == null) {
             throw new NotFoundException("rule", ruleId);
         }
-        article.setRule(rule);
-        return ruleOutputArticleRepository.save(article).getId();
+
+        RuleOutputArticleVO outputArticle = new RuleOutputArticleVO();
+        outputArticle.setRule(rule);
+        outputArticle.setCode(article.getCode());
+        outputArticle.setAmount(1);
+
+        ArticleVO tmpArticle = catalogueService.getArticleByCode(article.getCode());
+        outputArticle.setInCatalogue(tmpArticle != null);
+
+        if (tmpArticle != null) {
+            outputArticle.setDescription(tmpArticle.getDescription());
+        } else {
+            if (article.getDescription() != null) {
+                outputArticle.setDescription(article.getDescription());
+            } else {
+                outputArticle.setDescription("Unknown product");
+            }
+        }
+
+        return ruleOutputArticleRepository.save(outputArticle).getId();
+    }
+
+    @Override
+    public void deleteOutputArticle(@NonNull Long articleId) {
+        RuleOutputArticleVO article = ruleOutputArticleRepository.findOne(articleId);
+        if (article != null) {
+            ruleOutputArticleRepository.delete(article);
+        }
+    }
+
+    @Override
+    public void updateOutputArticleAmount(@NonNull Long articleId, @NonNull Integer amount) {
+        RuleOutputArticleVO article = ruleOutputArticleRepository.findOne(articleId);
+        if (article == null) {
+            throw new NotFoundException("outputArticle", articleId);
+        }
+        article.setAmount(amount);
+        ruleOutputArticleRepository.save(article);
     }
 
     private void rerankRules(@NonNull Integer oldIndex, @NonNull Integer newIndex) {

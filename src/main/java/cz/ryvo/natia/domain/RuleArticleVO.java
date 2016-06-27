@@ -40,4 +40,7 @@ public abstract class RuleArticleVO implements Serializable {
 
     @Column(name = "amount", nullable = false)
     private Integer amount;
+
+    @Column(name = "in_catalogue", nullable = false)
+    private Boolean inCatalogue;
 }
