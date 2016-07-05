@@ -23,6 +23,7 @@
     <script src="js/jquery.iframe-transport.js"></script>
     <!-- The basic File Upload plugin -->
     <script src="js/jquery.fileupload.js"></script>
+    <script src="js/jquery.fileDownload.js"></script>
 </head>
 
 <body>
@@ -44,7 +45,15 @@
                 <div class="tab-content">
                     <!-- O R D E  R S -->
                     <div id="order-tab" class="tab-pane fade in active">
-                        <p>Objednávky. Objednávky. Objednávky. Objednávky. Objednávky. Objednávky. Objednávky. Objednávky. </p>
+                        <span class="btn btn-success fileinput-button">
+                            <i class="glyphicon glyphicon-upload"></i>
+                            <span>Upload</span>
+                            <input id="order-upload" type="file" name="file" data-url="/api/v1/orders">
+                        </span>
+                        <div class="vspace"></div>
+                        <div id="order-processing-progress" class="progress" style="display: none">
+                            <div class="progress-bar progress-bar-success"></div>
+                        </div>
                     </div>
 
                     <!-- R U L E S -->
@@ -82,7 +91,7 @@
 
                         <div class="vspace"></div>
 
-                        <div class="row vertical-space">
+                        <div id="rule-details" class="row vertical-space">
                             <div class="col-md-3">
                                 <ul id="rule-list" class="list-group"></ul>
                             </div>
@@ -102,11 +111,15 @@
                         <span class="btn btn-primary fileinput-button">
                             <i class="glyphicon glyphicon-upload"></i>
                             <span>Upload</span>
-                            <input id="fileupload" type="file" name="file" data-url="/api/v1/catalogue">
+                            <input id="catalogue-upload" type="file" name="file" data-url="/api/v1/catalogue">
                         </span>
                         <div class="vspace"></div>
-                        <div id="progress" class="progress">
+                        <div id="catalogue-upload-progress" class="progress" style="display: none">
                             <div class="progress-bar progress-bar-success"></div>
+                        </div>
+                        <div class="panel panel-info">
+                            <div class="panel-heading"><strong>Catalogue information</strong></div>
+                            <div id="catalogue-info" class="panel-body"></div>
                         </div>
                     </div>
                 </div>
@@ -170,24 +183,57 @@
                     $('#add-output-product-btn').prop('disabled', disabled);
                 })
 
-        $('#fileupload').fileupload({
+        $('#catalogue-upload').fileupload({
             dataType: 'json',
             submit: function() {
+                $('#catalogue-upload-progress > .progress-bar').css('width', '0%');
+                $('#catalogue-upload-progress').css('display', 'block');
             },
             success: function (result, textStatus, jqXHRa) {
                 var message = result.numberOfArticlesImported + ' products were successfuly loaded.';
+                loadCatalogueInfo();
                 displaySuccess(message);
+                $('#catalogue-upload-progress').css('display', 'none');
             },
             error: function (jqXHR, textStatus, errorThrown) {
+                loadCatalogueInfo();
                 displayError(getErrorText(jqXHR));
-                $('#progress > .progress-bar').css('width', '0%');
+                $('#catalogue-upload-progress').css('display', 'none');
             },
             progressall: function (e, data) {
                 var progress = parseInt(data.loaded / data.total * 100, 10);
-                $('#progress > .progress-bar').css('width', progress + '%');
+                $('#catalogue-upload-progress > .progress-bar').css('width', progress + '%');
             }
         }).prop('disabled', !$.support.fileInput)
             .parent().addClass($.support.fileInput ? undefined : 'disabled');
+
+        $('#order-upload').fileupload({
+            submit: function() {
+                $('#order-upload-progress > .progress-bar').css('width', '0%');
+                $('#order-upload-progress').css('display', 'block');
+            },
+            success: function (data) {
+                var id = data.id;
+                $('#order-upload-progress').css('display', 'none');
+                $.fileDownload('/api/v1/orders/' + id, {
+                    successCallback: function(url) {
+                        displaySuccess('The order was successfuly processed.');
+                    },
+                    failCallback: function(html, url) {
+                        displayError('Download of processed order failed.');
+                    }
+                });
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                displayError(getErrorText(jqXHR));
+                $('#order-upload-progress').css('display', 'none');
+            },
+            progressall: function (e, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $('#order-upload-progress > .progress-bar').css('width', progress + '%');
+            }
+        }).prop('disabled', !$.support.fileInput)
+                .parent().addClass($.support.fileInput ? undefined : 'disabled');
 
         disableTypeahead();
     });
@@ -580,7 +626,28 @@
         $('div#product-inp input').val('');
     }
 
+    function loadCatalogueInfo() {
+        $('#catalogue-info').empty();
+        $.ajax({
+            type: 'GET',
+            url: '/api/v1/catalogue/info',
+            success: function(data) {
+                var info = '<table>' +
+                    '<tr><td>Date and time of last import</td><td>:</td><td>' + data.dateAndTimeOfImport + '</td></tr>' +
+                    '<tr><td>Number of items imported</td><td>:</td><td>' + data.numberOfImportedItems + '</td></tr>' +
+                    '<tr><td>Filename of imported catalogue</td><td>:</td><td>' + data.fileName + '</td></tr>' +
+                    '</<table>';
+                $('#catalogue-info').html(info);
+            },
+            error: function(xhr) {
+                displayError(getErrorText($xhr));
+            }
+        });
+
+    }
+
     loadRules();
+    loadCatalogueInfo();
 </script>
 </body>
 </html>

@@ -31,6 +31,7 @@
         <jackson.version>2.7.4</jackson.version>
         <apache-poi.version>3.14</apache-poi.version>
         <rest-assured.version>2.9.0</rest-assured.version>
+        <jackson-jsr310.version>2.7.5</jackson-jsr310.version>
 	</properties>
 
     <build>
@@ -114,6 +115,11 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <version>${apache-poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson-jsr310.version}</version>
         </dependency>
 
 

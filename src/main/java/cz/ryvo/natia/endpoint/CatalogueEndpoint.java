@@ -2,7 +2,9 @@ package cz.ryvo.natia.endpoint;
 
 import cz.ryvo.natia.api.Article;
 import cz.ryvo.natia.api.CatalogueImportResult;
+import cz.ryvo.natia.api.CatalogueInfo;
 import cz.ryvo.natia.converter.ArticleConverter;
+import cz.ryvo.natia.converter.CatalogueInfoConverter;
 import cz.ryvo.natia.service.CatalogueService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,9 @@ public class CatalogueEndpoint {
     @Autowired
     private ArticleConverter articleConverter;
 
+    @Autowired
+    private CatalogueInfoConverter catalogueInfoConverter;
+
     @RequestMapping(method = POST, consumes = MULTIPART_FORM_DATA_VALUE)
     @ApiOperation(value = "Create catalogue by uploading a file", consumes = MULTIPART_FORM_DATA_VALUE)
     public CatalogueImportResult importCatalogue(MultipartFile file) {
@@ -39,5 +44,11 @@ public class CatalogueEndpoint {
     @ApiOperation(value = "Search articles by code or description")
     public List<Article> searchArticles(@RequestParam("pattern") String pattern) {
         return articleConverter.toApi(catalogueService.searchArticles(pattern));
+    }
+
+    @RequestMapping(path = "/info", method = GET)
+    @ApiOperation(value = "Get information about imported catalogue")
+    public CatalogueInfo getCatalogueInfo() {
+        return catalogueInfoConverter.toApi(catalogueService.getCatalogueInfo());
     }
 }

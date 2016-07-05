@@ -31,3 +31,9 @@ CREATE TABLE rule_output_article (
   UNIQUE (rule_id, code),
   FOREIGN KEY (rule_id) REFERENCES rule (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE TABLE parameter (
+  id VARCHAR2(128) NOT NULL,
+  value VARCHAR2(1024) NOT NULL,
+  PRIMARY KEY (id)
+);

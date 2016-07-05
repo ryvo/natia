@@ -32,11 +32,11 @@ public class RuleVO {
     @Column(name = "rank", nullable = false)
     private Integer rank;
 
-    @OneToMany(mappedBy = "rule", cascade = ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "rule", cascade = ALL, orphanRemoval = true)
     @OrderColumn(name = "id")
     private List<RuleInputArticleVO> inputArticles;
 
-    @OneToMany(mappedBy = "rule", cascade = ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "rule", cascade = ALL, orphanRemoval = true)
     @OrderColumn(name = "id")
     private List<RuleOutputArticleVO> outputArticles;
 

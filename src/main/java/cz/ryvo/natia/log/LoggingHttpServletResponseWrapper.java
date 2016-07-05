@@ -45,8 +45,18 @@ public class LoggingHttpServletResponseWrapper extends HttpServletResponseWrappe
     public String getContent() {
         try {
             String responseEncoding = delegate.getCharacterEncoding();
-            return loggingServletOutpuStream.baos.toString(responseEncoding != null ? responseEncoding : UTF_8.name());
-        } catch (UnsupportedEncodingException e) {
+
+            byte[] content = loggingServletOutpuStream.baos.toByteArray();
+            StringBuffer sb = new StringBuffer();
+            for (byte b : content)
+            {
+                sb.append(String.format("%x", b));
+            }
+            String s = sb.toString();
+            return s;
+
+            //return loggingServletOutpuStream.baos.toString(responseEncoding != null ? responseEncoding : UTF_8.name());
+        } catch (Exception e) {
             return "[UNSUPPORTED ENCODING]";
         }
     }

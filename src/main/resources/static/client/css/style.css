@@ -149,7 +149,7 @@ ul#rule-list .placeholder { background: yellow; }
 }
 /* Typehead Bootsrap 3 style fix END */
 
-table {
+#rule-details table {
   width: 100%;
 }
 
@@ -173,4 +173,9 @@ td.article-amount {
 td.article-amount input {
   width: 40px !important;
   text-align: right;
+}
+
+#catalogue-info td {
+  padding: 4px 8px 4px 0;
+  font-size: 14px;
 }
