@@ -5,11 +5,11 @@ import cz.ryvo.natia.domain.ArticleVO;
 import cz.ryvo.natia.domain.RuleInputArticleVO;
 import cz.ryvo.natia.domain.RuleOutputArticleVO;
 import cz.ryvo.natia.domain.RuleVO;
-import cz.ryvo.natia.error.Errors;
+import cz.ryvo.natia.error.Errors.DUPLICATE_PRODUCT_CODE;
+import cz.ryvo.natia.error.Errors.DUPLICATE_RULE_NAME;
 import cz.ryvo.natia.error.Errors.INVALID_ITEM_RANK;
 import cz.ryvo.natia.exception.BadRequestException;
 import cz.ryvo.natia.exception.NotFoundException;
-import cz.ryvo.natia.repository.ArticleRepository;
 import cz.ryvo.natia.repository.RuleInputArticleRepository;
 import cz.ryvo.natia.repository.RuleOutputArticleRepository;
 import cz.ryvo.natia.repository.RuleRepository;
@@ -43,7 +43,7 @@ public class RuleServiceImpl implements RuleService {
 
     @Override
     public List<RuleVO> getRules() {
-        return ruleRepository.listAllRules();
+        return ruleRepository.findAll();
     }
 
     @Override
@@ -143,6 +143,8 @@ public class RuleServiceImpl implements RuleService {
             throw new NotFoundException("rule", ruleId);
         }
 
+        checkDuplicateRuleInputArticleCode(ruleId, article.getCode());
+
         RuleInputArticleVO inputArticle = new RuleInputArticleVO();
         inputArticle.setRule(rule);
         inputArticle.setCode(article.getCode());
@@ -190,6 +192,8 @@ public class RuleServiceImpl implements RuleService {
         if (rule == null) {
             throw new NotFoundException("rule", ruleId);
         }
+
+        checkDuplicateRuleOutputArticleCode(ruleId, article.getCode());
 
         RuleOutputArticleVO outputArticle = new RuleOutputArticleVO();
         outputArticle.setRule(rule);
@@ -240,7 +244,19 @@ public class RuleServiceImpl implements RuleService {
 
     private void checkDuplicateRuleName(String name) {
         if (ruleRepository.findOneByName(name) != null) {
-            throw new BadRequestException(Errors.DUPLICATE_RULE_NAME.class, singletonMap("name", name));
+            throw new BadRequestException(DUPLICATE_RULE_NAME.class, singletonMap("name", name));
+        }
+    }
+
+    private void checkDuplicateRuleInputArticleCode(Long ruleId, String code) {
+        if (ruleInputArticleRepository.findOneByRuleIdAndCode(ruleId, code) != null) {
+            throw new BadRequestException(DUPLICATE_PRODUCT_CODE.class, singletonMap("code", code));
+        }
+    }
+
+    private void checkDuplicateRuleOutputArticleCode(Long ruleId, String code) {
+        if (ruleOutputArticleRepository.findOneByRuleIdAndCode(ruleId, code) != null) {
+            throw new BadRequestException(DUPLICATE_PRODUCT_CODE.class, singletonMap("code", code));
         }
     }
 }

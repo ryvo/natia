@@ -15,6 +15,10 @@ public class BadRequestException extends BaseException {
         super(errorCodeClass, params);
     }
 
+    public BadRequestException(Class<? extends ErrorCode> errorCodeClass, Object... params) {
+        super(errorCodeClass, params);
+    }
+
     @Override
     public int getResponseStatus() {
         return HttpServletResponse.SC_BAD_REQUEST;

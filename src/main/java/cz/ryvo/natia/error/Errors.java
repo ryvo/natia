@@ -22,6 +22,9 @@ public final class Errors {
     @ErrorDescription(value = "2002", message = "Rule with name '{name}' exists already")
     public static final class DUPLICATE_RULE_NAME implements ErrorCode {}
 
+    @ErrorDescription(value = "1002", message = "Product with code '{code}' exists allready")
+    public static final class DUPLICATE_PRODUCT_CODE implements ErrorCode {}
+
     // OPERATION
     @ErrorDescription(value = "4000", message = "Search parameters are inaccurate and would provide too many results")
     public static final class SEARCH_PARAMS_TOO_INACCURATE implements ErrorCode {}

@@ -8,7 +8,6 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Data
-@NoArgsConstructor
 @Entity
 @Table(name = "rule_output_article")
 public class RuleOutputArticleVO extends RuleArticleVO {

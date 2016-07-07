@@ -185,6 +185,7 @@
 
         $('#catalogue-upload').fileupload({
             dataType: 'json',
+            pasteZone: null,
             submit: function() {
                 $('#catalogue-upload-progress > .progress-bar').css('width', '0%');
                 $('#catalogue-upload-progress').css('display', 'block');
@@ -208,6 +209,7 @@
             .parent().addClass($.support.fileInput ? undefined : 'disabled');
 
         $('#order-upload').fileupload({
+            pasteZone: null,
             submit: function() {
                 $('#order-upload-progress > .progress-bar').css('width', '0%');
                 $('#order-upload-progress').css('display', 'block');
@@ -623,6 +625,7 @@
     }
 
     function clearTypeahead() {
+        $('#product-inp').typeahead('val','');
         $('div#product-inp input').val('');
     }
 

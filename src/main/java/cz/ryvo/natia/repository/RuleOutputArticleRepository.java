@@ -8,4 +8,6 @@ import java.util.List;
 public interface RuleOutputArticleRepository extends JpaRepository<RuleOutputArticleVO, Long> {
 
     List<RuleOutputArticleVO> findManyByRuleId(Long ruleId);
+
+    RuleOutputArticleVO findOneByRuleIdAndCode(Long ruleId, String code);
 }

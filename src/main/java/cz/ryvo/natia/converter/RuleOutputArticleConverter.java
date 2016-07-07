@@ -8,6 +8,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,6 +18,9 @@ import static java.util.stream.Collectors.toList;
 public class RuleOutputArticleConverter implements BiConverter<RuleArticle, RuleOutputArticleVO> {
 
     public @Nullable RuleArticle toApi(@Nullable RuleOutputArticleVO domain) {
+        if (domain == null) {
+            return null;
+        }
         RuleArticle api = new RuleArticle();
         api.setId(domain.getId());
         api.setCode(domain.getCode());
@@ -26,6 +30,9 @@ public class RuleOutputArticleConverter implements BiConverter<RuleArticle, Rule
     }
 
     public @Nullable RuleOutputArticleVO toDomain(@Nullable RuleArticle api) {
+        if (api == null) {
+            return null;
+        }
         RuleOutputArticleVO domain = new RuleOutputArticleVO();
         domain.setCode(api.getCode());
         domain.setDescription(api.getDescription());
