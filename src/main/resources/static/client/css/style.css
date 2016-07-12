@@ -166,6 +166,7 @@ td.article-amount {
 }
 
 .article-delete-btn {
+  width: 32px;
   vertical-align: top;
   margin: 0 8px 0 0;
 }
@@ -178,4 +179,12 @@ td.article-amount input {
 #catalogue-info td {
   padding: 4px 8px 4px 0;
   font-size: 14px;
+}
+
+.required-products-column {
+  padding-left: 0;
+}
+
+.gift-products-column {
+  padding-right: 0;
 }
