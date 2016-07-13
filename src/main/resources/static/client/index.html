@@ -324,6 +324,10 @@
                             '</li>'
                     ).appendTo($('#required-product-list'));
 
+                    if (article.inCatalogue == false) {
+                        item.addClass("rule-article-not-in-catalogue");
+                    }
+
                     item.find('.editable').editable({clear:false})
                         .on('shown', function(e, editable) {
                             setTimeout(function() {
@@ -371,6 +375,10 @@
                             '  </tr></table>' +
                             '</li>'
                     ).appendTo($('#gift-product-list'));
+
+                    if (article.inCatalogue == false) {
+                        item.addClass("rule-article-not-in-catalogue");
+                    }
 
                     item.find('.editable').editable({clear:false})
                             .on('shown', function(e, editable) {

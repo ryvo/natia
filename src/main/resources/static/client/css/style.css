@@ -153,6 +153,10 @@ ul#rule-list .placeholder { background: yellow; }
   width: 100%;
 }
 
+.rule-article-not-in-catalogue {
+  background-color: pink;
+}
+
 td .article-code {
   text-align: left;
   vertical-align: middle;

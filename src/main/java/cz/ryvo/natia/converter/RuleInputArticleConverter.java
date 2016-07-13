@@ -25,6 +25,7 @@ public class RuleInputArticleConverter implements BiConverter<RuleArticle, RuleI
         api.setCode(domain.getCode());
         api.setDescription(domain.getDescription());
         api.setAmount(domain.getAmount());
+        api.setInCatalogue(domain.getInCatalogue());
         return api;
     }
 

@@ -1,13 +1,10 @@
 package cz.ryvo.natia.endpoint;
 
-import com.google.common.collect.ImmutableMap;
 import cz.ryvo.natia.IntegrationTest;
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.Collections;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static com.jayway.restassured.RestAssured.given;

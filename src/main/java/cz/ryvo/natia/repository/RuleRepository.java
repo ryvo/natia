@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface RuleRepository extends JpaRepository<RuleVO, Long> {
 
-    //List<RuleVO> findAllByOrderByRankAsc();
+    List<RuleVO> findAllByOrderByRankAsc();
 
     @Query("SELECT max(rank) FROM RuleVO")
     Integer getLastIndex();

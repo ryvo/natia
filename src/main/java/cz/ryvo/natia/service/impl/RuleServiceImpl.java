@@ -1,10 +1,7 @@
 package cz.ryvo.natia.service.impl;
 
 import com.google.common.collect.ImmutableMap;
-import cz.ryvo.natia.domain.ArticleVO;
-import cz.ryvo.natia.domain.RuleInputArticleVO;
-import cz.ryvo.natia.domain.RuleOutputArticleVO;
-import cz.ryvo.natia.domain.RuleVO;
+import cz.ryvo.natia.domain.*;
 import cz.ryvo.natia.error.Errors.DUPLICATE_PRODUCT_CODE;
 import cz.ryvo.natia.error.Errors.DUPLICATE_RULE_NAME;
 import cz.ryvo.natia.error.Errors.INVALID_ITEM_RANK;
@@ -17,6 +14,7 @@ import cz.ryvo.natia.service.CatalogueService;
 import cz.ryvo.natia.service.RuleService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +22,7 @@ import java.util.List;
 
 import static java.util.Collections.singletonMap;
 import static java.util.Objects.requireNonNull;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Service
 @Transactional
@@ -43,7 +42,7 @@ public class RuleServiceImpl implements RuleService {
 
     @Override
     public List<RuleVO> getRules() {
-        return ruleRepository.findAll();
+        return ruleRepository.findAllByOrderByRankAsc();
     }
 
     @Override
@@ -61,19 +60,34 @@ public class RuleServiceImpl implements RuleService {
 
         checkDuplicateRuleName(rule.getName());
 
+        RuleVO newRule = new RuleVO();
+        newRule.setName(rule.getName());
+        newRule.setRank(rule.getRank());
+
         Integer lastIndex = ruleRepository.getLastIndex();
-        if (rule.getRank() == null) {
-            rule.setRank(lastIndex == null ? 0 : ++lastIndex);
+        if (newRule.getRank() == null) {
+            newRule.setRank(lastIndex == null ? 0 : ++lastIndex);
         } else {
             if (lastIndex == null) {
-                rule.setRank(0);
-            } else if (rule.getRank() <= lastIndex) {
-                rerankRules(++lastIndex, rule.getRank());
+                newRule.setRank(0);
+            } else if (newRule.getRank() <= lastIndex) {
+                rerankRules(++lastIndex, newRule.getRank());
             } else {
-                rule.setRank(++lastIndex);
+                newRule.setRank(++lastIndex);
             }
         }
-        return ruleRepository.save(rule).getId();
+
+        Long ruleId = ruleRepository.save(newRule).getId();
+
+        if (!isEmpty(rule.getInputArticles())) {
+            rule.getInputArticles().forEach(p -> createInputArticle(ruleId, p));
+        }
+
+        if (!isEmpty(rule.getOutputArticles())) {
+            rule.getOutputArticles().forEach(p -> createOutputArticle(ruleId, p));
+        }
+
+        return ruleId;
     }
 
     @Override
@@ -83,20 +97,22 @@ public class RuleServiceImpl implements RuleService {
             throw new NotFoundException("rule", id);
         }
         persistedRule.setName(rule.getName());
-
         persistedRule.getInputArticles().clear();
-        rule.getInputArticles().forEach(p -> p.setRule(persistedRule));
-        persistedRule.getInputArticles().addAll(rule.getInputArticles());
-
         persistedRule.getOutputArticles().clear();
-        rule.getOutputArticles().forEach(p -> p.setRule(persistedRule));
-        persistedRule.getOutputArticles().addAll(rule.getOutputArticles());
 
         if (rule.getRank() != null) {
             rerankRules(persistedRule.getRank(), rule.getRank());
         }
 
         ruleRepository.save(persistedRule);
+
+        if (!isEmpty(rule.getInputArticles())) {
+            rule.getInputArticles().forEach(p -> createInputArticle(persistedRule.getId(), p));
+        }
+
+        if (!isEmpty(rule.getOutputArticles())) {
+            rule.getOutputArticles().forEach(p -> createOutputArticle(persistedRule.getId(), p));
+        }
     }
 
     @Override
@@ -148,20 +164,10 @@ public class RuleServiceImpl implements RuleService {
         RuleInputArticleVO inputArticle = new RuleInputArticleVO();
         inputArticle.setRule(rule);
         inputArticle.setCode(article.getCode());
-        inputArticle.setAmount(1);
-
-        ArticleVO tmpArticle = catalogueService.getArticleByCode(article.getCode());
-        inputArticle.setInCatalogue(tmpArticle != null);
-
-        if (tmpArticle != null) {
-            inputArticle.setDescription(tmpArticle.getDescription());
-        } else {
-            if (article.getDescription() != null) {
-                inputArticle.setDescription(article.getDescription());
-            } else {
-                inputArticle.setDescription("Unknown product");
-            }
-        }
+        inputArticle.setDescription(article.getDescription());
+        inputArticle.setAmount(article.getAmount());
+        inputArticle.setInCatalogue(getIsArticleInCatalogue(inputArticle));
+        inputArticle.setDescription(getRuleArticleDescription(inputArticle));
 
         return ruleInputArticleRepository.save(inputArticle).getId();
     }
@@ -198,20 +204,10 @@ public class RuleServiceImpl implements RuleService {
         RuleOutputArticleVO outputArticle = new RuleOutputArticleVO();
         outputArticle.setRule(rule);
         outputArticle.setCode(article.getCode());
-        outputArticle.setAmount(1);
-
-        ArticleVO tmpArticle = catalogueService.getArticleByCode(article.getCode());
-        outputArticle.setInCatalogue(tmpArticle != null);
-
-        if (tmpArticle != null) {
-            outputArticle.setDescription(tmpArticle.getDescription());
-        } else {
-            if (article.getDescription() != null) {
-                outputArticle.setDescription(article.getDescription());
-            } else {
-                outputArticle.setDescription("Unknown product");
-            }
-        }
+        outputArticle.setDescription(article.getDescription());
+        outputArticle.setAmount(article.getAmount());
+        outputArticle.setInCatalogue(getIsArticleInCatalogue(outputArticle));
+        outputArticle.setDescription(getRuleArticleDescription(outputArticle));
 
         return ruleOutputArticleRepository.save(outputArticle).getId();
     }
@@ -232,6 +228,22 @@ public class RuleServiceImpl implements RuleService {
         }
         article.setAmount(amount);
         ruleOutputArticleRepository.save(article);
+    }
+
+    private String getRuleArticleDescription(@NonNull RuleArticleVO ruleArticle) {
+        ArticleVO article = catalogueService.getArticleByCode(ruleArticle.getCode());
+        if (article != null && article.getDescription() != null) {
+            return article.getDescription();
+        }
+        if (ruleArticle.getDescription() != null) {
+            return ruleArticle.getDescription();
+        }
+        return "Unknown product";
+    }
+
+    private boolean getIsArticleInCatalogue(@NonNull RuleArticleVO ruleArticle) {
+        ArticleVO article = catalogueService.getArticleByCode(ruleArticle.getCode());
+        return article != null;
     }
 
     private void rerankRules(@NonNull Integer oldIndex, @NonNull Integer newIndex) {
