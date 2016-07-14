@@ -15,7 +15,7 @@ CREATE TABLE rule_input_article (
   rule_id BIGINT NOT NULL,
   code VARCHAR(50) NOT NULL,
   description VARCHAR(128) NOT NULL,
-  amount INT NOT NULL,
+  pieces INT NOT NULL,
   in_catalogue BOOLEAN NOT NULL,
   UNIQUE (rule_id, code),
   FOREIGN KEY (rule_id) REFERENCES rule (id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -26,7 +26,7 @@ CREATE TABLE rule_output_article (
   rule_id BIGINT NOT NULL,
   code VARCHAR(50) NOT NULL,
   description VARCHAR(128) NOT NULL,
-  amount INT NOT NULL,
+  pieces INT NOT NULL,
   in_catalogue BOOLEAN NOT NULL,
   UNIQUE (rule_id, code),
   FOREIGN KEY (rule_id) REFERENCES rule (id) ON DELETE CASCADE ON UPDATE CASCADE

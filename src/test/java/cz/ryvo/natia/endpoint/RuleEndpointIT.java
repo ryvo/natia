@@ -54,14 +54,14 @@ public class RuleEndpointIT extends IntegrationTest {
                 .body("inputArticles.size()", is(2))
                 .body("inputArticles.code", Matchers.hasItems("00001/01", "00001/02"))
                 .body("inputArticles.find {p -> p.code == '00001/01'}.description", equalTo("Input article 1"))
-                .body("inputArticles.find {p -> p.code == '00001/01'}.amount", equalTo(11))
+                .body("inputArticles.find {p -> p.code == '00001/01'}.pieces", equalTo(11))
                 .body("inputArticles.find {p -> p.code == '00001/02'}.description", equalTo("Input article 2"))
-                .body("inputArticles.find {p -> p.code == '00001/02'}.amount", equalTo(12))
+                .body("inputArticles.find {p -> p.code == '00001/02'}.pieces", equalTo(12))
                 .body("outputArticles.code", Matchers.hasItems("00002/01", "00002/02"))
                 .body("outputArticles.find {p -> p.code == '00002/01'}.description", equalTo("Output article 1"))
-                .body("outputArticles.find {p -> p.code == '00002/01'}.amount", equalTo(21))
+                .body("outputArticles.find {p -> p.code == '00002/01'}.pieces", equalTo(21))
                 .body("outputArticles.find {p -> p.code == '00002/02'}.description", equalTo("Output article 2"))
-                .body("outputArticles.find {p -> p.code == '00002/02'}.amount", equalTo(22));
+                .body("outputArticles.find {p -> p.code == '00002/02'}.pieces", equalTo(22));
     }
 
     @Test
@@ -115,14 +115,14 @@ public class RuleEndpointIT extends IntegrationTest {
                 .body("inputArticles.size()", is(3))
                 .body("inputArticles.code", Matchers.hasItems("00003/01", "00003/02", "00003/03"))
                 .body("inputArticles.find {p -> p.code == '00003/01'}.description", equalTo("Updated input article 1"))
-                .body("inputArticles.find {p -> p.code == '00003/01'}.amount", equalTo(31))
+                .body("inputArticles.find {p -> p.code == '00003/01'}.pieces", equalTo(31))
                 .body("inputArticles.find {p -> p.code == '00003/02'}.description", equalTo("Updated input article 2"))
-                .body("inputArticles.find {p -> p.code == '00003/02'}.amount", equalTo(32))
+                .body("inputArticles.find {p -> p.code == '00003/02'}.pieces", equalTo(32))
                 .body("inputArticles.find {p -> p.code == '00003/03'}.description", equalTo("Updated input article 3"))
-                .body("inputArticles.find {p -> p.code == '00003/03'}.amount", equalTo(33))
+                .body("inputArticles.find {p -> p.code == '00003/03'}.pieces", equalTo(33))
                 .body("outputArticles.code", Matchers.hasItems("00004/01"))
                 .body("outputArticles.find {p -> p.code == '00004/01'}.description", equalTo("Updated output article 1"))
-                .body("outputArticles.find {p -> p.code == '00004/01'}.amount", equalTo(41));
+                .body("outputArticles.find {p -> p.code == '00004/01'}.pieces", equalTo(41));
     }
 
     @Test

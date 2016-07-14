@@ -2,20 +2,16 @@ package cz.ryvo.natia.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderArticleVO implements Serializable {
+@EqualsAndHashCode(exclude = "pieces")
+public class GiftArticleRuleVO {
 
-    public static final Long serialVersionUID = 1L;
-
-    private String code;
-
-    private String description;
+    private String name;
 
     private Integer pieces;
 }

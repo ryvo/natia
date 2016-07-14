@@ -26,7 +26,7 @@ public class RuleArticle implements Serializable {
 
     @NotNull
     @Min(1)
-    private Integer amount;
+    private Integer pieces;
 
     @OutputOnly
     private Boolean inCatalogue;

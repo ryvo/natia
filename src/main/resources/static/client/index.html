@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Natia</title>
     <!-- Bootstrap styles -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap.css">
     <link rel="stylesheet" href="css/bootstrap-editable.css">
     <!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
     <link rel="stylesheet" href="css/jquery.fileupload.css">
@@ -16,14 +16,14 @@
 
     <script src="js/jquery.min.js"></script>
     <script src="js/jquery-ui.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap.js"></script>
     <script src="js/bootstrap-editable.js"></script>
     <script src="js/typeahead.bundle.js"></script>
     <!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
     <script src="js/jquery.iframe-transport.js"></script>
     <!-- The basic File Upload plugin -->
     <script src="js/jquery.fileupload.js"></script>
-    <script src="js/jquery.fileDownload.js"></script>
+    <!--<script src="js/jquery.fileDownload.js"></script>-->
 </head>
 
 <body>
@@ -51,8 +51,20 @@
                             <input id="order-upload" type="file" name="file" data-url="/api/v1/orders">
                         </span>
                         <div class="vspace"></div>
-                        <div id="order-processing-progress" class="progress" style="display: none">
+                        <div id="order-processing-progress" class="progress" style="visibility: hidden">
                             <div class="progress-bar progress-bar-success"></div>
+                        </div>
+                        <div id="results" style="visibility: hidden">
+                            <table id="results-table" class="table table-hover">
+                                <thead>
+                                    <th class="gift-code">Code</th>
+                                    <th class="gift-description">Description</th>
+                                    <th class="gift-pieces">Pieces</th>
+                                </thead>
+                                <tbody>
+                                    <td colspan="3"><i>No results</i></td>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
 
@@ -114,7 +126,7 @@
                             <input id="catalogue-upload" type="file" name="file" data-url="/api/v1/catalogue">
                         </span>
                         <div class="vspace"></div>
-                        <div id="catalogue-upload-progress" class="progress" style="display: none">
+                        <div id="catalogue-upload-progress" class="progress" style="visibility: hidden">
                             <div class="progress-bar progress-bar-success"></div>
                         </div>
                         <div class="panel panel-info">
@@ -188,18 +200,18 @@
             pasteZone: null,
             submit: function() {
                 $('#catalogue-upload-progress > .progress-bar').css('width', '0%');
-                $('#catalogue-upload-progress').css('display', 'block');
+                $('#catalogue-upload-progress').css('visibility', 'visible');
             },
             success: function (result, textStatus, jqXHRa) {
                 var message = result.numberOfArticlesImported + ' products were successfuly loaded.';
                 loadCatalogueInfo();
                 displaySuccess(message);
-                $('#catalogue-upload-progress').css('display', 'none');
+                $('#catalogue-upload-progress').css('visibility', 'hidden');
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 loadCatalogueInfo();
                 displayError(getErrorText(jqXHR));
-                $('#catalogue-upload-progress').css('display', 'none');
+                $('#catalogue-upload-progress').css('visibility', 'hidden');
             },
             progressall: function (e, data) {
                 var progress = parseInt(data.loaded / data.total * 100, 10);
@@ -211,24 +223,50 @@
         $('#order-upload').fileupload({
             pasteZone: null,
             submit: function() {
+                $('#results').css('visibility', 'hidden');
+                $('#results-table tbody').empty();
                 $('#order-upload-progress > .progress-bar').css('width', '0%');
-                $('#order-upload-progress').css('display', 'block');
+                $('#order-processing-progress').css('visibility', 'visible');
             },
             success: function (data) {
-                var id = data.id;
-                $('#order-upload-progress').css('display', 'none');
-                $.fileDownload('/api/v1/orders/' + id, {
-                    successCallback: function(url) {
-                        displaySuccess('The order was successfuly processed.');
-                    },
-                    failCallback: function(html, url) {
-                        displayError('Download of processed order failed.');
+                var i = 0;
+                data.forEach(function(gift) {
+                    var giftId = 'gift-' + i;
+                    var giftRulesId = 'gift-rules-' + i;
+                    gitem = $('<tr data-toggle="collapse" data-target="#' + giftId + '" class="clickable">' +
+                            '  <td class="gift-code">' + gift.code + '</td>' +
+                            '  <td class="gift-description">' + gift.description + '</td>' +
+                            '  <td class="gift-pieces">' + gift.pieces + '</td>' +
+                            '</tr>' +
+                            '<tr id="' + giftId + '" class="collapse">' +
+                            '  <td colspan="3" class="gift-rule-cell">' +
+                            '  <div>' +
+                            '    <table id="' + giftRulesId + '" class="table table-bordered gift-rule-table">' +
+                            '      <thead><th class="gift-rule-table-rule-name">Rule name</th><th class="gift-rule-table-rule-pieces">Pieces</th></thead>' +
+                            '    </table>' +
+                            '  </div>' +
+                            '  </td>' +
+                            '</tr>');
+
+                    gift.rules.forEach(function(rule) {
+                        ritem = $('<tr><td class="gift-rule-table-rule-name">' + rule.name + '</td><td class="gift-rule-table-rule-pieces">' + rule.pieces + '</td></tr>');
+                        gitem.find('#' + giftRulesId).append(ritem);
+                    });
+
+                    if (gift.inCatalogue == false) {
+                        gitem.addClass("rule-article-not-in-catalogue");
                     }
+
+                    $('#results-table').append(gitem);
+
+                    i++;
                 });
+                $('#order-processing-progress').css('visibility', 'hidden');
+                $('#results').css('visibility', 'visible');
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 displayError(getErrorText(jqXHR));
-                $('#order-upload-progress').css('display', 'none');
+                $('#order-processing-progress').css('visibility', 'hidden');
             },
             progressall: function (e, data) {
                 var progress = parseInt(data.loaded / data.total * 100, 10);
@@ -315,11 +353,11 @@
                             '  <table><tr>' +
                             '    <td class="article-delete-btn"><div class="article-delete-btn btn btn-danger btn-xs remove-button glyphicon glyphicon-remove"></div></td>' +
                             '    <td class="article-code"><strong>' + article.code + '</strong></i></td>' +
-                            '    <td class="article-amount"><span class="editable"><strong>' + article.amount + '</strong></span></td>' +
+                            '    <td class="article-pieces"><span class="editable"><strong>' + article.pieces + '</strong></span></td>' +
                             '  </tr><tr>' +
                             '    <td class="article-delete-btn"></td>' +
                             '    <td class="article-code"><i>' + article.description + '</i></td>' +
-                            '    <td class="article-amount"></td>' +
+                            '    <td class="article-pieces"></td>' +
                             '  </tr></table>' +
                             '</li>'
                     ).appendTo($('#required-product-list'));
@@ -335,7 +373,7 @@
                             }, 0);
                         })
                         .on('save', function (e, params) {
-                            updateRequiredArticleAmount(article.id, params.newValue);
+                            updateRequiredArticlePieces(article.id, params.newValue);
                         });
 
                     item.find('.article-delete-btn')
@@ -367,11 +405,11 @@
                             '  <table><tr>' +
                             '    <td class="article-delete-btn"><div class="article-delete-btn btn btn-danger btn-xs remove-button glyphicon glyphicon-remove"></div></td>' +
                             '    <td class="article-code"><strong>' + article.code + '</strong></i></td>' +
-                            '    <td class="article-amount"><span class="editable"><strong>' + article.amount + '</strong></span></td>' +
+                            '    <td class="article-pieces"><span class="editable"><strong>' + article.pieces + '</strong></span></td>' +
                             '  </tr><tr>' +
                             '    <td class="article-delete-btn"></td>' +
                             '    <td class="article-code"><i>' + article.description + '</i></td>' +
-                            '    <td class="article-amount"></td>' +
+                            '    <td class="article-pieces"></td>' +
                             '  </tr></table>' +
                             '</li>'
                     ).appendTo($('#gift-product-list'));
@@ -387,7 +425,7 @@
                                 }, 0);
                             })
                             .on('save', function (e, params) {
-                                updateGiftArticleAmount(article.id, params.newValue);
+                                updateGiftArticlePieces(article.id, params.newValue);
                             });
 
                     item.find('.article-delete-btn')
@@ -488,7 +526,7 @@
             url: '/api/v1/rules/' + ruleId + '/required-articles',
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',
-            data: JSON.stringify({'code': code, 'amount': 1}),
+            data: JSON.stringify({'code': code, 'pieces': 1}),
             success: function(data) {
                 clearTypeahead();
                 loadRequiredProducts(ruleId);
@@ -501,10 +539,10 @@
     }
 
 
-    function updateRequiredArticleAmount(id, amount) {
+    function updateRequiredArticlePieces(id, pieces) {
         $.ajax({
             type: 'PUT',
-            url: '/api/v1/rules/required-articles/' + id + '/amount/' + amount,
+            url: '/api/v1/rules/required-articles/' + id + '/pieces/' + pieces,
             success: function(data) {
                 loadRequiredProducts(selectedRuleId);
             },
@@ -535,7 +573,7 @@
             url: '/api/v1/rules/' + ruleId + '/gift-articles',
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',
-            data: JSON.stringify({'code': code, 'amount': 1}),
+            data: JSON.stringify({'code': code, 'pieces': 1}),
             success: function(data) {
                 clearTypeahead();
                 loadGiftProducts(ruleId);
@@ -548,10 +586,10 @@
     }
 
 
-    function updateGiftArticleAmount(id, amount) {
+    function updateGiftArticlePieces(id, pieces) {
         $.ajax({
             type: 'PUT',
-            url: '/api/v1/rules/gift-articles/' + id + '/amount/' + amount,
+            url: '/api/v1/rules/gift-articles/' + id + '/pieces/' + pieces,
             success: function(data) {
                 loadGiftProducts(selectedRuleId);
             },
