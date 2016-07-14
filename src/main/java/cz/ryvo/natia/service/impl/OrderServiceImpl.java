@@ -21,13 +21,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Service
@@ -41,37 +39,37 @@ public class OrderServiceImpl implements OrderService {
     private RuleService ruleService;
 
     @Override
-    public byte[] processOrder(@NonNull MultipartFile file) {
+    public List<GiftArticleVO> processOrder(@NonNull MultipartFile file) {
         Map<String, OrderArticleVO> articles = parseOrderedArticles(file).stream()
                 .collect(Collectors.toMap(OrderArticleVO::getCode, Function.identity()));
         List<RuleVO> rules = ruleService.getRules();
 
+        Map<String, GiftArticleVO> giftArticles = new HashMap<>();
         List<RuleVO> calculatedRules = new ArrayList<>();
-        rules.forEach(p -> {
-            RuleVO rule = calculateRule(articles, p);
+        rules.forEach(r -> { // Iterate rules
+            RuleVO rule = calculateRule(articles, r); // Calculate gifts for the rule
             if (rule != null) {
+                rule.getOutputArticles().forEach(a -> { // Iterate rule output articles (calculated gifts)
+                    GiftArticleVO giftArticle = giftArticles.get(a.getCode());
+                    if (giftArticle != null) {
+                        giftArticle.setAmount(giftArticle.getAmount() + a.getAmount());
+                        giftArticle.setCode(a.getCode());
+                        giftArticle.setDescription(a.getDescription());
+                        giftArticle.getRules().add(new GiftArticleRuleVO(r.getName(), a.getAmount()));
+                    } else {
+                        giftArticle = new GiftArticleVO();
+                        giftArticle.setAmount(a.getAmount());
+                        giftArticle.setCode(a.getCode());
+                        giftArticle.setDescription(a.getDescription());
+                        giftArticle.getRules().add(new GiftArticleRuleVO(r.getName(), a.getAmount()));
+                        giftArticles.put(a.getCode(), giftArticle);
+                    }
+                });
                 calculatedRules.add(rule);
             }
         });
 
-        List<RuleOutputArticleVO> summarizedGifts = summarizeGifts(calculatedRules);
-
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        createGiftSummaryExcelSheet(workbook, summarizedGifts);
-        createRuleOverviewExcelSheet(workbook, calculatedRules);
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-            workbook.write(out);
-        } catch (IOException e) {
-            throw new InternalServerException(e);
-        }
-        return out.toByteArray();
-    }
-
-    @Override
-    public String getFileExtension() {
-        return ".xls";
+        return giftArticles.entrySet().stream().map(Map.Entry::getValue).collect(toList());
     }
 
     private List<OrderArticleVO> parseOrderedArticles(MultipartFile file) {

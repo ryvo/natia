@@ -192,3 +192,38 @@ td.article-amount input {
 .gift-products-column {
   padding-right: 0;
 }
+
+.results-table {
+  width : 100%;
+}
+
+.gift-code {
+  width: 10%;
+}
+
+.gift-description {
+  width: 80%;
+}
+
+.gift-amount {
+  width: 10%;
+  text-align: right;
+}
+
+.gift-rule-cell {
+  background-color: lavender;
+}
+
+.gift-rule-table {
+  width: 80%;
+  margin: 8px auto;
+  background: rgba(255,255,255,0.5) !important;
+}
+
+.gift-rule-table-rule-name {
+  width: 80%;
+}
+.gift-rule-table-rule-pieces {
+  width: 20%;
+  text-align: right;
+}
