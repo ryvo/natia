@@ -17,5 +17,5 @@ public class OrderArticleVO implements Serializable {
 
     private String description;
 
-    private Integer amount;
+    private Integer pieces;
 }

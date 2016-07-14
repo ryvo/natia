@@ -13,7 +13,7 @@ import java.util.Map;
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = {
         "description",
-        "amount",
+        "pieces",
         "inCatalogue",
         "rules"
 })
@@ -23,7 +23,7 @@ public class GiftArticleVO {
 
     private String description;
 
-    private Integer amount;
+    private Integer pieces;
 
     private Boolean inCatalogue;
 

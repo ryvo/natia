@@ -27,8 +27,8 @@ public abstract class RuleArticleVO implements Serializable {
     @Column(name = "description", length = 128, nullable = false)
     private String description;
 
-    @Column(name = "amount", nullable = false)
-    private Integer amount;
+    @Column(name = "pieces", nullable = false)
+    private Integer pieces;
 
     @Column(name = "in_catalogue", nullable = false)
     private Boolean inCatalogue;

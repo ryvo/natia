@@ -30,11 +30,11 @@ public interface RuleService {
 
     void deleteInputArticle(@NonNull Long articleId);
 
-    void updateInputArticleAmount(@NonNull Long articleId, @NonNull Integer amount);
+    void updateInputArticlePieces(@NonNull Long articleId, @NonNull Integer amount);
 
     Long createOutputArticle(@NonNull Long ruleId, @NonNull RuleOutputArticleVO article);
 
     void deleteOutputArticle(@NonNull Long articleId);
 
-    void updateOutputArticleAmount(@NonNull Long articleId, @NonNull Integer amount);
+    void updateOutputArticlePieces(@NonNull Long articleId, @NonNull Integer amount);
 }

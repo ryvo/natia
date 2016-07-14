@@ -102,9 +102,9 @@ public class RuleEndpoint {
         ruleService.deleteInputArticle(articleId);
     }
 
-    @RequestMapping(path = "/required-articles/{articleId}/amount/{amount}", method = PUT)
-    public void updateRequiredArticleAmount(@PathVariable("articleId") Long articleId, @PathVariable("amount") Integer amount) {
-        ruleService.updateInputArticleAmount(articleId, amount);
+    @RequestMapping(path = "/required-articles/{articleId}/pieces/{pieces}", method = PUT)
+    public void updateRequiredArticlePieces(@PathVariable("articleId") Long articleId, @PathVariable("pieces") Integer pieces) {
+        ruleService.updateInputArticlePieces(articleId, pieces);
     }
 
     @RequestMapping(path = "/{ruleId}/gift-articles", method = POST)
@@ -119,8 +119,8 @@ public class RuleEndpoint {
         ruleService.deleteOutputArticle(articleId);
     }
 
-    @RequestMapping(path = "/gift-articles/{articleId}/amount/{amount}", method = PUT)
-    public void updateGiftArticleAmount(@PathVariable("articleId") Long articleId, @PathVariable("amount") Integer amount) {
-        ruleService.updateOutputArticleAmount(articleId, amount);
+    @RequestMapping(path = "/gift-articles/{articleId}/pieces/{pieces}", method = PUT)
+    public void updateGiftArticlePieces(@PathVariable("articleId") Long articleId, @PathVariable("pieces") Integer pieces) {
+        ruleService.updateOutputArticlePieces(articleId, pieces);
     }
 }

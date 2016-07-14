@@ -54,7 +54,7 @@ public class ExcelOrderReader implements OrderReader {
                 article.setCode(code);
                 article.setDescription(name);
                 try {
-                    article.setAmount(Integer.parseInt(strAmount));
+                    article.setPieces(Integer.parseInt(strAmount));
                 } catch (NumberFormatException e) {
                     continue;
                 }

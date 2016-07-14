@@ -12,5 +12,5 @@ public class GiftArticleRule {
     private String name;
 
     @OutputOnly
-    private Integer amount;
+    private Integer pieces;
 }

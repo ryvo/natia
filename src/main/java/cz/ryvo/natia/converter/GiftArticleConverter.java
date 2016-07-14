@@ -1,8 +1,6 @@
 package cz.ryvo.natia.converter;
 
 import cz.ryvo.natia.api.GiftArticle;
-import cz.ryvo.natia.api.GiftArticleRule;
-import cz.ryvo.natia.domain.GiftArticleRuleVO;
 import cz.ryvo.natia.domain.GiftArticleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -26,7 +24,7 @@ public class GiftArticleConverter implements ApiConverter<GiftArticle, GiftArtic
         GiftArticle api = new GiftArticle();
         api.setCode(domain.getCode());
         api.setDescription(domain.getDescription());
-        api.setAmount(domain.getAmount());
+        api.setPieces(domain.getPieces());
         api.setInCatalogue(domain.getInCatalogue());
         api.setRules(giftArticleRuleConverter.toApi(domain.getRules()));
         return api;

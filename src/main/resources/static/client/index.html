@@ -59,7 +59,7 @@
                                 <thead>
                                     <th class="gift-code">Code</th>
                                     <th class="gift-description">Description</th>
-                                    <th class="gift-amount">Pieces</th>
+                                    <th class="gift-pieces">Pieces</th>
                                 </thead>
                                 <tbody>
                                     <td colspan="3"><i>No results</i></td>
@@ -236,7 +236,7 @@
                     gitem = $('<tr data-toggle="collapse" data-target="#' + giftId + '" class="clickable">' +
                             '  <td class="gift-code">' + gift.code + '</td>' +
                             '  <td class="gift-description">' + gift.description + '</td>' +
-                            '  <td class="gift-amount">' + gift.amount + '</td>' +
+                            '  <td class="gift-pieces">' + gift.pieces + '</td>' +
                             '</tr>' +
                             '<tr id="' + giftId + '" class="collapse">' +
                             '  <td colspan="3" class="gift-rule-cell">' +
@@ -249,9 +249,13 @@
                             '</tr>');
 
                     gift.rules.forEach(function(rule) {
-                        ritem = $('<tr><td class="gift-rule-table-rule-name">' + rule.name + '</td><td class="gift-rule-table-rule-pieces">' + rule.amount + '</td></tr>');
+                        ritem = $('<tr><td class="gift-rule-table-rule-name">' + rule.name + '</td><td class="gift-rule-table-rule-pieces">' + rule.pieces + '</td></tr>');
                         gitem.find('#' + giftRulesId).append(ritem);
                     });
+
+                    if (gift.inCatalogue == false) {
+                        gitem.addClass("rule-article-not-in-catalogue");
+                    }
 
                     $('#results-table').append(gitem);
 
@@ -349,11 +353,11 @@
                             '  <table><tr>' +
                             '    <td class="article-delete-btn"><div class="article-delete-btn btn btn-danger btn-xs remove-button glyphicon glyphicon-remove"></div></td>' +
                             '    <td class="article-code"><strong>' + article.code + '</strong></i></td>' +
-                            '    <td class="article-amount"><span class="editable"><strong>' + article.amount + '</strong></span></td>' +
+                            '    <td class="article-pieces"><span class="editable"><strong>' + article.pieces + '</strong></span></td>' +
                             '  </tr><tr>' +
                             '    <td class="article-delete-btn"></td>' +
                             '    <td class="article-code"><i>' + article.description + '</i></td>' +
-                            '    <td class="article-amount"></td>' +
+                            '    <td class="article-pieces"></td>' +
                             '  </tr></table>' +
                             '</li>'
                     ).appendTo($('#required-product-list'));
@@ -369,7 +373,7 @@
                             }, 0);
                         })
                         .on('save', function (e, params) {
-                            updateRequiredArticleAmount(article.id, params.newValue);
+                            updateRequiredArticlePieces(article.id, params.newValue);
                         });
 
                     item.find('.article-delete-btn')
@@ -401,11 +405,11 @@
                             '  <table><tr>' +
                             '    <td class="article-delete-btn"><div class="article-delete-btn btn btn-danger btn-xs remove-button glyphicon glyphicon-remove"></div></td>' +
                             '    <td class="article-code"><strong>' + article.code + '</strong></i></td>' +
-                            '    <td class="article-amount"><span class="editable"><strong>' + article.amount + '</strong></span></td>' +
+                            '    <td class="article-pieces"><span class="editable"><strong>' + article.pieces + '</strong></span></td>' +
                             '  </tr><tr>' +
                             '    <td class="article-delete-btn"></td>' +
                             '    <td class="article-code"><i>' + article.description + '</i></td>' +
-                            '    <td class="article-amount"></td>' +
+                            '    <td class="article-pieces"></td>' +
                             '  </tr></table>' +
                             '</li>'
                     ).appendTo($('#gift-product-list'));
@@ -421,7 +425,7 @@
                                 }, 0);
                             })
                             .on('save', function (e, params) {
-                                updateGiftArticleAmount(article.id, params.newValue);
+                                updateGiftArticlePieces(article.id, params.newValue);
                             });
 
                     item.find('.article-delete-btn')
@@ -522,7 +526,7 @@
             url: '/api/v1/rules/' + ruleId + '/required-articles',
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',
-            data: JSON.stringify({'code': code, 'amount': 1}),
+            data: JSON.stringify({'code': code, 'pieces': 1}),
             success: function(data) {
                 clearTypeahead();
                 loadRequiredProducts(ruleId);
@@ -535,10 +539,10 @@
     }
 
 
-    function updateRequiredArticleAmount(id, amount) {
+    function updateRequiredArticlePieces(id, pieces) {
         $.ajax({
             type: 'PUT',
-            url: '/api/v1/rules/required-articles/' + id + '/amount/' + amount,
+            url: '/api/v1/rules/required-articles/' + id + '/pieces/' + pieces,
             success: function(data) {
                 loadRequiredProducts(selectedRuleId);
             },
@@ -569,7 +573,7 @@
             url: '/api/v1/rules/' + ruleId + '/gift-articles',
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',
-            data: JSON.stringify({'code': code, 'amount': 1}),
+            data: JSON.stringify({'code': code, 'pieces': 1}),
             success: function(data) {
                 clearTypeahead();
                 loadGiftProducts(ruleId);
@@ -582,10 +586,10 @@
     }
 
 
-    function updateGiftArticleAmount(id, amount) {
+    function updateGiftArticlePieces(id, pieces) {
         $.ajax({
             type: 'PUT',
-            url: '/api/v1/rules/gift-articles/' + id + '/amount/' + amount,
+            url: '/api/v1/rules/gift-articles/' + id + '/pieces/' + pieces,
             success: function(data) {
                 loadGiftProducts(selectedRuleId);
             },

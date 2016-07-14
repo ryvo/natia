@@ -17,7 +17,7 @@ public class GiftArticle {
     private String description;
 
     @OutputOnly
-    private Integer amount;
+    private Integer pieces;
 
     @OutputOnly
     private Boolean inCatalogue;

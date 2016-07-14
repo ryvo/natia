@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = "amount")
+@EqualsAndHashCode(exclude = "pieces")
 public class GiftArticleRuleVO {
 
     private String name;
 
-    private Integer amount;
+    private Integer pieces;
 }

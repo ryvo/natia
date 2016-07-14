@@ -19,7 +19,7 @@ public class GiftArticleRuleConverter implements ApiConverter<GiftArticleRule, G
         }
         GiftArticleRule api = new GiftArticleRule();
         api.setName(domain.getName());
-        api.setAmount(domain.getAmount());
+        api.setPieces(domain.getPieces());
         return api;
     }
 

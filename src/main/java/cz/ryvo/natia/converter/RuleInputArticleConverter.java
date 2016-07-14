@@ -3,7 +3,6 @@ package cz.ryvo.natia.converter;
 import cz.ryvo.natia.api.RuleArticle;
 import cz.ryvo.natia.domain.RuleInputArticleVO;
 import cz.ryvo.natia.domain.RuleVO;
-import lombok.NonNull;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Nonnull;
@@ -24,7 +23,7 @@ public class RuleInputArticleConverter implements BiConverter<RuleArticle, RuleI
         api.setId(domain.getId());
         api.setCode(domain.getCode());
         api.setDescription(domain.getDescription());
-        api.setAmount(domain.getAmount());
+        api.setPieces(domain.getPieces());
         api.setInCatalogue(domain.getInCatalogue());
         return api;
     }
@@ -36,7 +35,7 @@ public class RuleInputArticleConverter implements BiConverter<RuleArticle, RuleI
         RuleInputArticleVO domain = new RuleInputArticleVO();
         domain.setCode(api.getCode());
         domain.setDescription(api.getDescription());
-        domain.setAmount(api.getAmount());
+        domain.setPieces(api.getPieces());
         return domain;
     }
 

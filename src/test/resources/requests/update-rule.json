@@ -4,17 +4,17 @@
     {
       "code": "00003/01",
       "description": "Updated input article 1",
-      "amount": 31
+      "pieces": 31
     },
     {
       "code": "00003/02",
       "description": "Updated input article 2",
-      "amount": 32
+      "pieces": 32
     },
     {
       "code": "00003/03",
       "description": "Updated input article 3",
-      "amount": 33
+      "pieces": 33
     }
 
   ],
@@ -22,7 +22,7 @@
     {
       "code": "00004/01",
       "description": "Updated output article 1",
-      "amount": 41
+      "pieces": 41
     }
   ]
 }

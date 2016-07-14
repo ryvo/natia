@@ -14,7 +14,6 @@ import cz.ryvo.natia.service.CatalogueService;
 import cz.ryvo.natia.service.RuleService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -165,7 +164,7 @@ public class RuleServiceImpl implements RuleService {
         inputArticle.setRule(rule);
         inputArticle.setCode(article.getCode());
         inputArticle.setDescription(article.getDescription());
-        inputArticle.setAmount(article.getAmount());
+        inputArticle.setPieces(article.getPieces());
         inputArticle.setInCatalogue(getIsArticleInCatalogue(inputArticle));
         inputArticle.setDescription(getRuleArticleDescription(inputArticle));
 
@@ -181,12 +180,12 @@ public class RuleServiceImpl implements RuleService {
     }
 
     @Override
-    public void updateInputArticleAmount(@NonNull Long articleId, @NonNull Integer amount) {
+    public void updateInputArticlePieces(@NonNull Long articleId, @NonNull Integer amount) {
         RuleInputArticleVO article = ruleInputArticleRepository.findOne(articleId);
         if (article == null) {
             throw new NotFoundException("inputArticle", articleId);
         }
-        article.setAmount(amount);
+        article.setPieces(amount);
         ruleInputArticleRepository.save(article);
     }
 
@@ -205,7 +204,7 @@ public class RuleServiceImpl implements RuleService {
         outputArticle.setRule(rule);
         outputArticle.setCode(article.getCode());
         outputArticle.setDescription(article.getDescription());
-        outputArticle.setAmount(article.getAmount());
+        outputArticle.setPieces(article.getPieces());
         outputArticle.setInCatalogue(getIsArticleInCatalogue(outputArticle));
         outputArticle.setDescription(getRuleArticleDescription(outputArticle));
 
@@ -221,12 +220,12 @@ public class RuleServiceImpl implements RuleService {
     }
 
     @Override
-    public void updateOutputArticleAmount(@NonNull Long articleId, @NonNull Integer amount) {
+    public void updateOutputArticlePieces(@NonNull Long articleId, @NonNull Integer amount) {
         RuleOutputArticleVO article = ruleOutputArticleRepository.findOne(articleId);
         if (article == null) {
             throw new NotFoundException("outputArticle", articleId);
         }
-        article.setAmount(amount);
+        article.setPieces(amount);
         ruleOutputArticleRepository.save(article);
     }
 
