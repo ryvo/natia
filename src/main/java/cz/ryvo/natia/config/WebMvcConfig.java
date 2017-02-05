@@ -51,12 +51,11 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 
-    @Override
+/*    @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/client/index.html")
-                .addResourceLocations("classpath:/static/client")
+                .addResourceLocations("classpath*:/static/client")
                 .resourceChain(false)
                 .addTransformer(new MainPageTransformer());
-    }
-
+    }*/
 }
